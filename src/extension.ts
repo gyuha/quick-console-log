@@ -109,8 +109,6 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
     });
 }
 
-// this method is called when your extension is deactivated
-export function deactivate() {}
 
 function getExtensionProperties(
   workspaceConfig: vscode.WorkspaceConfiguration
@@ -161,4 +159,8 @@ enum Wrap {
   Inline,
   Down,
   Up,
+}
+
+export function deactivate() {
+	return undefined;
 }
