@@ -15,18 +15,9 @@ export function activate(context: vscode.ExtensionContext) {
     (editor) => (currentEditor = editor as vscode.TextEditor)
   );
 
-  let disposable = vscode.commands.registerCommand(
-    "quick-console-log.helloWorld",
-    () => {
-      vscode.window.showInformationMessage(
-        "Hello World from Quick console log!"
-      );
-    }
-  );
-
   context.subscriptions.push(
     vscode.commands.registerTextEditorCommand(
-      "quick-console-log.wrap",
+      "quickConsoleLog.wrap.down",
       (editor, edit) => handle(Wrap.Down)
     )
   );
@@ -34,11 +25,15 @@ export function activate(context: vscode.ExtensionContext) {
 
 function handle(target: Wrap, prefix?: boolean, type?: string) {
   new Promise((resolve, reject) => {
+		const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(
+			"quickConsoleLog"
+		);
+		const properties: ExtensionProperties = getExtensionProperties(config);
     const sel = currentEditor.selection;
     const len = sel.end.character - sel.start.character;
 
     const ran =
-      len == 0
+      len === 0
         ? currentEditor.document.getWordRangeAtPosition(sel.anchor)
         : new vscode.Range(sel.start, sel.end);
 

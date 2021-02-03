@@ -10,23 +10,54 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:quick-console-log.wrap"
+    "onCommand:quickConsoleLog.wrap.down"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "quick-console-log.wrap",
+        "command": "quickConsoleLog.wrap.down",
         "title": "Quick console log down"
       }
     ],
     "keybindings": [
       {
-        "command": "quick-console-log.wrap",
+        "command": "quickConsoleLog.wrap.down",
         "key": "ctrl+alt+l",
         "when": "editorTextFocus"
       }
-    ]
+		],
+		"configuration": {
+			"type": "object",
+			"title": "Quick Console Log Configuration",
+			"properties": {
+				"quickConsoleLog.logMessagePrefix": {
+					"type": "string",
+					"default": "🚩",
+					"description": "The prefix of the log message."
+				},
+				"quickConsoleLog.addSemicolonInTheEnd": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to add or not a semicolon in the end of the log message."
+				},
+				"quickConsoleLog.quote": {
+					"type": "string",
+					"enum": [
+						"\"",
+						"'",
+						"`"
+					],
+					"default": "\"",
+					"description": "Double quotes, single quotes or backtick"
+				},
+				"quickConsoleLog.includeFileNameAndLineNum": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to include the file name and the line number of the log message."
+        }
+			}
+		}
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
