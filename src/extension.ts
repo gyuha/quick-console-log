@@ -156,7 +156,6 @@ interface WrapData {
 }
 
 enum Wrap {
-  Inline,
   Down,
   Up,
 }
