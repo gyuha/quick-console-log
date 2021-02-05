@@ -1,0 +1,9 @@
+{
+  "print": {
+    "prefix": "cl",
+    "body": [
+      "print('📢 [${TM_FILENAME}:${TM_LINE_NUMBER}]', ${0:$CLIPBOARD});"
+    ],
+    "description": "print"
+  }
+}

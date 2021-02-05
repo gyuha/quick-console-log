@@ -46,43 +46,65 @@
         "key": "ctrl+alt+c",
         "when": "editorTextFocus"
       }
-		],
-		"configuration": {
-			"type": "object",
-			"title": "Quick Console Log Configuration",
-			"properties": {
-				"quickConsoleLog.logMessagePrefix": {
-					"type": "string",
-					"default": "🚩",
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Quick Console Log Configuration",
+      "properties": {
+        "quickConsoleLog.logMessagePrefix": {
+          "type": "string",
+          "default": "📢",
           "description": "The prefix of the log message."
-				},
-				"quickConsoleLog.addSemicolonInTheEnd": {
-					"type": "boolean",
-					"default": true,
-					"description": "Whether to add or not a semicolon in the end of the log message."
-				},
-				"quickConsoleLog.quote": {
-					"type": "string",
-					"enum": [
-						"\"",
-						"'",
-						"`"
-					],
-					"default": "\"",
-					"description": "Double quotes, single quotes or backtick"
-				},
-				"quickConsoleLog.useFullPath": {
+        },
+        "quickConsoleLog.addSemicolonInTheEnd": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to add or not a semicolon in the end of the log message."
+        },
+        "quickConsoleLog.quote": {
+          "type": "string",
+          "enum": [
+            "\"",
+            "'",
+            "`"
+          ],
+          "default": "\"",
+          "description": "Double quotes, single quotes or backtick"
+        },
+        "quickConsoleLog.useFullPath": {
           "type": "boolean",
           "default": false,
           "description": "Use full path of file name."
         },
-				"quickConsoleLog.includeFileNameAndLineNum": {
+        "quickConsoleLog.includeFileNameAndLineNum": {
           "type": "boolean",
           "default": true,
           "description": "Whether to include the file name and the line number of the log message."
         }
-			}
-		}
+      }
+    },
+    "snippets": [
+      {
+        "language": "javascript",
+        "path": "./snippets/console-log.code-snippets"
+      },
+      {
+        "language": "javascriptreact",
+        "path": "./snippets/console-log.code-snippets"
+      },
+      {
+        "language": "typescript",
+        "path": "./snippets/console-log.code-snippets"
+      },
+      {
+        "language": "typescriptreact",
+        "path": "./snippets/console-log.code-snippets"
+      },
+      {
+        "language": "python",
+        "path": "./snippets/print.code-snippets"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

@@ -1,0 +1,9 @@
+{
+  "console log": {
+    "prefix": "cl",
+    "body": [
+      "console.log('📢 [${TM_FILENAME}:${TM_LINE_NUMBER}]', ${0:$CLIPBOARD});"
+    ],
+    "description": "console.log"
+  }
+}
