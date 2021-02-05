@@ -4,6 +4,11 @@ All notable changes to the "quick-console-log" extension will be documented in t
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [Unreleased]
-
-- Initial release
+## [0.1.0] - 2021-02-05
+### first release
+- support language
+  - javascript
+  - typescript
+  - python
+- 3 hot-key (up, down, line)
+- snippet
