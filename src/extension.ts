@@ -45,17 +45,25 @@ function handle(direction: Wrap, prefix?: boolean, type?: string) {
     const sel = currentEditor.selection;
     const len = sel.end.character - sel.start.character;
 
-    const ran =
+    let ran =
       len === 0
-        ? currentEditor.document.getWordRangeAtPosition(sel.anchor)
-        : new vscode.Range(sel.start, sel.end);
+        ? currentEditor.document.getWordRangeAtPosition(sel.anchor) as vscode.Range
+        : new vscode.Range(sel.start, sel.end) as vscode.Range;
 
     if (ran === undefined) {
       throw new Error("NO_WORD");
     }
 
     const lineNumber = ran.start.line;
-    const item = doc.getText(ran);
+
+    let item;
+    if (direction === Wrap.line && len === 0) {
+      item = doc.lineAt(lineNumber).text;
+      ran = new vscode.Range(new vscode.Position(lineNumber, 0), new vscode.Position(lineNumber, item.length)) as vscode.Range;
+    } else {
+      item = doc.getText(ran);
+    }
+
 
     const idx = doc.lineAt(lineNumber).firstNonWhitespaceCharacterIndex;
     const ind = doc.lineAt(lineNumber).text.substring(0, idx);
@@ -112,13 +120,13 @@ function handle(direction: Wrap, prefix?: boolean, type?: string) {
 
         currentEditor
           .edit((e) => {
-              e.insert(
-                new vscode.Position(lineNumber, 0),
-                ind.concat(txt, "\n")
-              );
+            e.insert(new vscode.Position(lineNumber, 0), ind.concat(txt, "\n"));
           })
           .then(() => {
-            let newSel = new vscode.Position(lineNumber + 1, sel.anchor.character);
+            let newSel = new vscode.Position(
+              lineNumber + 1,
+              sel.anchor.character
+            );
             currentEditor.selection = new vscode.Selection(newSel, newSel);
           });
         break;
