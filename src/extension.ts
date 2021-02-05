@@ -1,19 +1,33 @@
 import * as vscode from "vscode";
 import { ExtensionProperties } from "./entities/extensionProperties";
 
-let currentEditor: vscode.TextEditor;
-let currentContext: vscode.ExtensionContext;
+type SupportLanguage = 'javascript' | 'python';
 
-const supportDocs = [
+const javascriptDocs = [ 
   "javascript",
   "javascriptreact",
   "typescript",
   "typescriptreact",
+];
+
+const supportDocs = [
+  ...javascriptDocs,
   "python",
 ];
 
+const logFunctionName = {
+  javascript: "console.log",
+  python: "print",
+};
+
+const logBraceString = {
+  javascript: ["(", ")"],
+  python: ["(", ")"],
+};
+
+let currentEditor: vscode.TextEditor;
+
 export function activate(context: vscode.ExtensionContext) {
-  currentContext = context;
   currentEditor = vscode.window.activeTextEditor as vscode.TextEditor;
 
   vscode.window.onDidChangeActiveTextEditor(
@@ -32,7 +46,9 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
   new Promise((resolve, reject) => {
     const doc = currentEditor.document;
 
-    if (supportDocs.indexOf(doc.languageId) < 0) {
+    const language = getDocType(doc.languageId);
+
+    if (language === undefined) {
       reject("NO_SUPPORT_DOC");
     }
 
@@ -69,6 +85,8 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
     const semicolon = properties.addSemicolonInTheEnd ? ";" : "";
     const { logMessagePrefix, quote } = properties;
     const fileNameAnLineNumber = properties.includeFileNameAndLineNum;
+
+    const type = getDocType();
 
     if (type === "nameValue") {
       wrapData.txt =
@@ -155,9 +173,16 @@ function getExtensionProperties() {
   return extensionProperties;
 }
 
-function getSetting(setting: string) {
-  return vscode.workspace.getConfiguration("quick-console-log")[setting];
+function getDocType(doc: string): SupportLanguage | undefined {
+  if (javascriptDocs.indexOf(doc) < 0) {
+    return 'javascript';
+  }
+  if (doc === 'python') {
+    return 'python';
+  }
+  return undefined;
 }
+
 
 function getTabSize(tabSize: string | number | undefined): number {
   if (tabSize && typeof tabSize === "number") {
