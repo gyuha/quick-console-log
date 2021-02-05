@@ -15,12 +15,12 @@ const supportDocs = [
   "python",
 ];
 
-const logFunctionName = {
+const logFunctionName: {[k in SupportLanguage]: string} = {
   javascript: "console.log",
   python: "print",
 };
 
-const logBraceString = {
+const logBraceString: {[k in SupportLanguage]: string[]} = {
   javascript: ["(", ")"],
   python: ["(", ")"],
 };
@@ -50,6 +50,7 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
 
     if (language === undefined) {
       reject("NO_SUPPORT_DOC");
+      return;
     }
 
     const properties: ExtensionProperties = getExtensionProperties();
@@ -63,16 +64,29 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
 
     if (ran === undefined) {
       reject("NO_WORD");
+      return;
     }
 
-    const lineNumber = ran?.start.line as number;
+    const lineNumber = ran.start.line;
     const item = doc.getText(ran);
 
     const idx = doc.lineAt(lineNumber).firstNonWhitespaceCharacterIndex;
     const ind = doc.lineAt(lineNumber).text.substring(0, idx);
-    const funcName = getSetting("functionName");
+
+    const semicolon = properties.addSemicolonInTheEnd ? ";" : "";
+    const { logMessagePrefix, quote } = properties;
+    const fileNameAnLineNumber = properties.includeFileNameAndLineNum;
+
+    let txt = logFunctionName[language].concat(logBraceString[language][0]);
+
+    if (logMessagePrefix) {
+      txt = txt.concat(quote, logMessagePrefix, quote, ", ");
+    }
+
+    txt = txt.concat(item, logBraceString[language][1], semicolon);
+
     let wrapData: WrapData = {
-      txt: getSetting("functionName"),
+      txt,
       item,
       ran: ran as vscode.Range,
       doc,
@@ -82,43 +96,6 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
       sel,
       lastLine: doc.lineCount - 1 === lineNumber,
     };
-    const semicolon = properties.addSemicolonInTheEnd ? ";" : "";
-    const { logMessagePrefix, quote } = properties;
-    const fileNameAnLineNumber = properties.includeFileNameAndLineNum;
-
-    const type = getDocType();
-
-    if (type === "nameValue") {
-      wrapData.txt =
-        funcName +
-        "('".concat(wrapData.item, "', ", wrapData.item, ")", semicolon);
-    } else if (type === "arguments") {
-      wrapData.txt =
-        funcName +
-        "('".concat(wrapData.item, "', ", "arguments", ")", semicolon);
-    } else if (type === "get") {
-      wrapData.txt = "const aaa = get(".concat(
-        wrapData.item,
-        ", '",
-        "aaa",
-        "', '')",
-        semicolon
-      );
-    } else if (type === "return") {
-      wrapData.txt = "return ".concat(wrapData.item, semicolon);
-    } else if (type === "json") {
-      wrapData.txt =
-        funcName +
-        "('".concat(
-          wrapData.item,
-          "', JSON.stringify(",
-          wrapData.item,
-          ", null, 2))",
-          semicolon
-        );
-    } else {
-      wrapData.txt = funcName + "('".concat(wrapData.item, "')", semicolon);
-    }
     resolve(wrapData);
   })
     // @ts-ignore
@@ -174,7 +151,7 @@ function getExtensionProperties() {
 }
 
 function getDocType(doc: string): SupportLanguage | undefined {
-  if (javascriptDocs.indexOf(doc) < 0) {
+  if (javascriptDocs.indexOf(doc) >= 0) {
     return 'javascript';
   }
   if (doc === 'python') {
