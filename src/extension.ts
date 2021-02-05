@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as vscode from "vscode";
 import { ExtensionProperties, getExtensionProperties } from "./entities/extensionProperties";
 import { getDocType, SupportLanguage } from "./entities/support";
+import { Wrap, WrapData } from './entities/wrap';
 
 const logFunctionName: {[k in SupportLanguage]: string} = {
   javascript: "console.log",
@@ -62,14 +63,22 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
     const ind = doc.lineAt(lineNumber).text.substring(0, idx);
 
     const semicolon = properties.addSemicolonInTheEnd ? ";" : "";
-    const { logMessagePrefix, quote } = properties;
+    const { logMessagePrefix, quote, useFullPath } = properties;
     const fileNameAnLineNumber = properties.includeFileNameAndLineNum;
 
     let txt = logFunctionName[language].concat(logBraceString[language][0]);
 
     let fl = "";
+    let fileName = doc.fileName;
+
+    if (useFullPath === false) {
+      fileName = path.basename(doc.fileName);
+    }  else {
+      fileName = fileName.replace(/\\/g, "\\\\");
+    }
+
     if (fileNameAnLineNumber) {
-      fl = fl.concat("[", path.basename(doc.fileName), ":", String(lineNumber), "]:");
+      fl = fl.concat("[", fileName, ":", String(lineNumber), "]:");
     }
 
     if (logMessagePrefix) {
@@ -133,23 +142,6 @@ function getTabSize(tabSize: string | number | undefined): number {
   } else {
     return 4;
   }
-}
-
-interface WrapData {
-  txt: string;
-  item: string;
-  sel: vscode.Selection;
-  doc: vscode.TextDocument;
-  ran: vscode.Range;
-  ind: string;
-  idx: number;
-  line: number;
-  lastLine: boolean;
-}
-
-enum Wrap {
-  down,
-  up,
 }
 
 export function deactivate() {

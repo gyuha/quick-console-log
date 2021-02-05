@@ -51,6 +51,11 @@
 					"default": "\"",
 					"description": "Double quotes, single quotes or backtick"
 				},
+				"quickConsoleLog.useFullPath": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use full path of file name."
+        },
 				"quickConsoleLog.includeFileNameAndLineNum": {
           "type": "boolean",
           "default": true,

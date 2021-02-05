@@ -5,6 +5,7 @@ export type ExtensionProperties = {
   addSemicolonInTheEnd: boolean;
   includeFileNameAndLineNum: boolean;
   quote: string;
+  useFullPath: boolean;
 };
 
 export function getExtensionProperties() {
@@ -17,11 +18,13 @@ export function getExtensionProperties() {
   const addSemicolonInTheEnd = config.addSemicolonInTheEnd || false;
   const quote = config.quote || '"';
   const includeFileNameAndLineNum = config.includeFileNameAndLineNum || false;
+  const useFullPath = config.useFullPath || false;
   const extensionProperties: ExtensionProperties = {
     logMessagePrefix,
     addSemicolonInTheEnd,
     quote,
     includeFileNameAndLineNum,
+    useFullPath
   };
   return extensionProperties;
 }
