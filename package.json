@@ -2,9 +2,9 @@
   "name": "quick-console-log",
   "displayName": "Quick console log",
   "description": "Help insert log statements.",
-  "icon": "https://raw.githubusercontent.com/gyuha/quick-console-log/main/images/icon.png",
+  "icon": "images/icon.png",
   "repository": "https://github.com/gyuha/quick-console-log",
-  "publisher": "Gyuha",
+  "publisher": "nicegyuha",
   "version": "0.1.0",
   "engines": {
     "vscode": "^1.52.0"
@@ -115,7 +115,8 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "packaging": "vsce package"
   },
   "devDependencies": {
     "@types/vscode": "^1.52.0",
