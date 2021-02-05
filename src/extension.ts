@@ -4,6 +4,14 @@ import { ExtensionProperties } from "./entities/extensionProperties";
 let currentEditor: vscode.TextEditor;
 let currentContext: vscode.ExtensionContext;
 
+const supportDocs = [
+  "javascript",
+  "javascriptreact",
+  "typescript",
+  "typescriptreact",
+  "python",
+];
+
 export function activate(context: vscode.ExtensionContext) {
   currentContext = context;
   currentEditor = vscode.window.activeTextEditor as vscode.TextEditor;
@@ -22,10 +30,13 @@ export function activate(context: vscode.ExtensionContext) {
 
 function handle(target: Wrap, prefix?: boolean, type?: string) {
   new Promise((resolve, reject) => {
-    const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(
-      "quickConsoleLog"
-    );
-    const properties: ExtensionProperties = getExtensionProperties(config);
+    const doc = currentEditor.document;
+
+    if (supportDocs.indexOf(doc.languageId) < 0) {
+      reject("NO_SUPPORT_DOC");
+    }
+
+    const properties: ExtensionProperties = getExtensionProperties();
     const sel = currentEditor.selection;
     const len = sel.end.character - sel.start.character;
 
@@ -38,7 +49,6 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
       reject("NO_WORD");
     }
 
-    const doc = currentEditor.document;
     const lineNumber = ran?.start.line as number;
     const item = doc.getText(ran);
 
@@ -57,7 +67,7 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
       lastLine: doc.lineCount - 1 === lineNumber,
     };
     const semicolon = properties.addSemicolonInTheEnd ? ";" : "";
-    const {logMessagePrefix, quote} = properties;
+    const { logMessagePrefix, quote } = properties;
     const fileNameAnLineNumber = properties.includeFileNameAndLineNum;
 
     if (type === "nameValue") {
@@ -126,16 +136,16 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
     });
 }
 
-function getExtensionProperties(
-  workspaceConfig: vscode.WorkspaceConfiguration
-) {
-  const logMessagePrefix = workspaceConfig.logMessagePrefix
-    ? workspaceConfig.logMessagePrefix
+function getExtensionProperties() {
+  const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(
+    "quickConsoleLog"
+  );
+  const logMessagePrefix = config.logMessagePrefix
+    ? config.logMessagePrefix
     : "";
-  const addSemicolonInTheEnd = workspaceConfig.addSemicolonInTheEnd || false;
-  const quote = workspaceConfig.quote || '"';
-  const includeFileNameAndLineNum =
-    workspaceConfig.includeFileNameAndLineNum || false;
+  const addSemicolonInTheEnd = config.addSemicolonInTheEnd || false;
+  const quote = config.quote || '"';
+  const includeFileNameAndLineNum = config.includeFileNameAndLineNum || false;
   const extensionProperties: ExtensionProperties = {
     logMessagePrefix,
     addSemicolonInTheEnd,
