@@ -2,7 +2,7 @@
   "name": "quick-console-log",
   "displayName": "Quick console log",
   "description": "Help insert log statements.",
-  "icon": "images/icon.png",
+  "icon": "https://raw.githubusercontent.com/gyuha/quick-console-log/main/images/icon.png",
   "repository": "https://github.com/gyuha/quick-console-log",
   "publisher": "Gyuha",
   "version": "0.1.0",

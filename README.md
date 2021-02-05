@@ -13,17 +13,17 @@ In Python, `print` is used instead of `console.log`.
 ## Demo and description
 ### Hot key
 `ctrl+alt+d`: Log output at the bottom of the sentence.
-![line.gif](https://github.com/gyuha/quick-console-log/blob/main/images/wrap-down.gif?raw=true)
+![line.gif](https://raw.githubusercontent.com/gyuha/quick-console-log/main/images/wrap-down.gif)
 
 `ctrl+alt+u`: Log output at the up of the sentence.
-![line.gif](https://github.com/gyuha/quick-console-log/blob/main/images/wrap-up.gif?raw=true)
+![line.gif](https://raw.githubusercontent.com/gyuha/quick-console-log/main/images/wrap-up.gif)
 
 `ctrl+alt+c`:  Log output at the current of the sentence.
-![line.gif](https://github.com/gyuha/quick-console-log/blob/main/images/wrap-line.gif?raw=true)
+![line.gif](https://raw.githubusercontent.com/gyuha/quick-console-log/main/images/wrap-line.gif)
 
 ### Snippet
 `cl`: Log output by clipboard.
-![snippet.gif](https://github.com/gyuha/quick-console-log/blob/main/images/snippet.gif?raw=true)
+![snippet.gif](https://raw.githubusercontent.com/gyuha/quick-console-log/main/images/snippet.gif)
 
 
 ## Properties
