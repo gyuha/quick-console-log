@@ -34,7 +34,7 @@
 				"quickConsoleLog.logMessagePrefix": {
 					"type": "string",
 					"default": "🚩",
-					"description": "The prefix of the log message."
+          "description": "The prefix of the log message."
 				},
 				"quickConsoleLog.addSemicolonInTheEnd": {
 					"type": "boolean",

@@ -1,12 +1,9 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { ExtensionProperties } from "./entities/extensionProperties";
 
 let currentEditor: vscode.TextEditor;
 let currentContext: vscode.ExtensionContext;
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+
 export function activate(context: vscode.ExtensionContext) {
   currentContext = context;
   currentEditor = vscode.window.activeTextEditor as vscode.TextEditor;
@@ -18,17 +15,17 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerTextEditorCommand(
       "quickConsoleLog.wrap.down",
-      (editor, edit) => handle(Wrap.Down)
+      (editor, edit) => handle(Wrap.down)
     )
   );
 }
 
 function handle(target: Wrap, prefix?: boolean, type?: string) {
   new Promise((resolve, reject) => {
-		const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(
-			"quickConsoleLog"
-		);
-		const properties: ExtensionProperties = getExtensionProperties(config);
+    const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(
+      "quickConsoleLog"
+    );
+    const properties: ExtensionProperties = getExtensionProperties(config);
     const sel = currentEditor.selection;
     const len = sel.end.character - sel.start.character;
 
@@ -39,44 +36,64 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
 
     if (ran === undefined) {
       reject("NO_WORD");
-      return;
-		}
+    }
 
-		let doc = currentEditor.document;
-		let lineNumber = ran.start.line;
-		let item = doc.getText(ran);
+    const doc = currentEditor.document;
+    const lineNumber = ran?.start.line as number;
+    const item = doc.getText(ran);
 
-		let idx = doc.lineAt(lineNumber).firstNonWhitespaceCharacterIndex;
-		let ind = doc.lineAt(lineNumber).text.substring(0, idx);
-		const funcName = getSetting('functionName');
-		let wrapData: WrapData = {
-			txt: getSetting('functionName'),
-			item: item,
-			doc: doc,
-			ran: ran,
-			idx: idx,
-			ind: ind,
-			line: lineNumber,
-			sel: sel,
-			lastLine: doc.lineCount - 1 == lineNumber,
-		};
-		const semicolon = getSetting('useSemicolon') ? ';' : '';
-		if (type === 'nameValue') {
-			wrapData.txt = funcName + "('".concat(wrapData.item, "', ", wrapData.item, ')', semicolon);
-		} else if (type === 'arguments') {
-			wrapData.txt = funcName + "('".concat(wrapData.item, "', ", 'arguments', ')', semicolon);
-		} else if (type === 'get') {
-			wrapData.txt = "const aaa = get(".concat(wrapData.item, ", '", 'aaa', "', '')", semicolon);
-		} else if (type === 'return') {
-			wrapData.txt = "return ".concat(wrapData.item, semicolon);
-		} else if (type === 'json') {
-			wrapData.txt = funcName + "('".concat(wrapData.item, "', JSON.stringify(", wrapData.item, ", null, 2))", semicolon);
-		} else {
-			wrapData.txt = funcName + "('".concat(wrapData.item, "')", semicolon);
-		}
-		resolve(wrapData);
-	})
-		// @ts-ignore
+    const idx = doc.lineAt(lineNumber).firstNonWhitespaceCharacterIndex;
+    const ind = doc.lineAt(lineNumber).text.substring(0, idx);
+    const funcName = getSetting("functionName");
+    let wrapData: WrapData = {
+      txt: getSetting("functionName"),
+      item,
+      ran: ran as vscode.Range,
+      doc,
+      idx,
+      ind,
+      line: lineNumber,
+      sel,
+      lastLine: doc.lineCount - 1 === lineNumber,
+    };
+    const semicolon = properties.addSemicolonInTheEnd ? ";" : "";
+    const {logMessagePrefix, quote} = properties;
+    const fileNameAnLineNumber = properties.includeFileNameAndLineNum;
+
+    if (type === "nameValue") {
+      wrapData.txt =
+        funcName +
+        "('".concat(wrapData.item, "', ", wrapData.item, ")", semicolon);
+    } else if (type === "arguments") {
+      wrapData.txt =
+        funcName +
+        "('".concat(wrapData.item, "', ", "arguments", ")", semicolon);
+    } else if (type === "get") {
+      wrapData.txt = "const aaa = get(".concat(
+        wrapData.item,
+        ", '",
+        "aaa",
+        "', '')",
+        semicolon
+      );
+    } else if (type === "return") {
+      wrapData.txt = "return ".concat(wrapData.item, semicolon);
+    } else if (type === "json") {
+      wrapData.txt =
+        funcName +
+        "('".concat(
+          wrapData.item,
+          "', JSON.stringify(",
+          wrapData.item,
+          ", null, 2))",
+          semicolon
+        );
+    } else {
+      wrapData.txt = funcName + "('".concat(wrapData.item, "')", semicolon);
+    }
+    resolve(wrapData);
+  })
+    // @ts-ignore
     .then((wrap: WrapData) => {
       let nxtLine: vscode.TextLine;
       let nxtLineInd: string;
@@ -108,7 +125,6 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
       console.error("quick-console-log REJECTED_PROMISE :", message);
     });
 }
-
 
 function getExtensionProperties(
   workspaceConfig: vscode.WorkspaceConfiguration
@@ -156,10 +172,10 @@ interface WrapData {
 }
 
 enum Wrap {
-  Down,
-  Up,
+  down,
+  up,
 }
 
 export function deactivate() {
-	return undefined;
+  return undefined;
 }
