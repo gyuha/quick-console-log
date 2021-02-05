@@ -1,21 +1,11 @@
-import * as path from "path";
 import * as vscode from "vscode";
 import {
   ExtensionProperties,
   getExtensionProperties
 } from "./entities/extensionProperties";
-import { getDocType, SupportLanguage } from "./entities/support";
+import { getDocType } from "./entities/support";
 import { Wrap } from "./entities/wrap";
-
-const logFunctionName: { [k in SupportLanguage]: string } = {
-  javascript: "console.log",
-  python: "print",
-};
-
-const logBraceString: { [k in SupportLanguage]: string[] } = {
-  javascript: ["(", ")"],
-  python: ["(", ")"],
-};
+import { outputText } from "./outputText";
 
 let currentEditor: vscode.TextEditor;
 
@@ -30,11 +20,19 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerTextEditorCommand(
       "quickConsoleLog.wrap.down",
       (editor, edit) => handle(Wrap.down)
+    ),
+    vscode.commands.registerTextEditorCommand(
+      "quickConsoleLog.wrap.up",
+      (editor, edit) => handle(Wrap.up)
+    ),
+    vscode.commands.registerTextEditorCommand(
+      "quickConsoleLog.wrap.line",
+      (editor, edit) => handle(Wrap.line)
     )
   );
 }
 
-function handle(target: Wrap, prefix?: boolean, type?: string) {
+function handle(direction: Wrap, prefix?: boolean, type?: string) {
   try {
     const doc = currentEditor.document;
 
@@ -44,7 +42,6 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
       throw new Error("NO_SUPPORT_DOC");
     }
 
-    const properties: ExtensionProperties = getExtensionProperties();
     const sel = currentEditor.selection;
     const len = sel.end.character - sel.start.character;
 
@@ -63,36 +60,48 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
     const idx = doc.lineAt(lineNumber).firstNonWhitespaceCharacterIndex;
     const ind = doc.lineAt(lineNumber).text.substring(0, idx);
 
-    const semicolon = properties.addSemicolonInTheEnd ? ";" : "";
-    const { logMessagePrefix, quote, useFullPath } = properties;
-    const fileNameAnLineNumber = properties.includeFileNameAndLineNum;
+    const properties: ExtensionProperties = getExtensionProperties();
+    // get output text
+    const txt = outputText(
+      item,
+      doc,
+      language,
+      direction === Wrap.down ? lineNumber + 1 : lineNumber,
+      properties
+    );
 
-    let txt = logFunctionName[language].concat(logBraceString[language][0]);
+    const getTargetLine = () => {
+      let stop = false;
+      let li = lineNumber;
+      let l = 0;
+      while (!stop) {
+        if (direction === Wrap.down) {
+        } else {
+          li--;
+        }
+        if (li < doc.lineCount) {
+          if (!doc.lineAt(li).isEmptyOrWhitespace) {
+            l = li;
+            stop = true;
+          }
+        } else {
+          if (li === doc.lineCount) {
+            li--;
+            stop = true;
+          }
+        }
+      }
+      return li;
+    };
 
-    let fl = "";
-    let fileName = doc.fileName;
+    // insert text
+    let printLineNumber = direction === Wrap.down ? lineNumber : lineNumber - 1;
+    printLineNumber = printLineNumber < 0 ? 0 : printLineNumber;
 
-    if (useFullPath === false) {
-      fileName = path.basename(doc.fileName);
-    } else {
-      fileName = fileName.replace(/\\/g, "\\\\");
-    }
-
-    if (fileNameAnLineNumber) {
-      fl = fl.concat("[", fileName, ":", String(lineNumber), "]:");
-    }
-
-    if (logMessagePrefix) {
-      txt = txt.concat(quote, logMessagePrefix, fl, quote, ", ");
-    }
-
-    txt = txt.concat(item, logBraceString[language][1], semicolon);
-
-    // output text
     let nxtLine: vscode.TextLine;
     let nxtLineInd: string;
 
-    if (!(doc.lineCount -1 === lineNumber)) {
+    if (!(doc.lineCount - 1 === lineNumber)) {
       nxtLine = doc.lineAt(lineNumber + 1);
       nxtLineInd = nxtLine.text.substring(
         0,
@@ -101,34 +110,64 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
     } else {
       nxtLineInd = "";
     }
-    currentEditor
-      .edit((e) => {
-        e.insert(
-          new vscode.Position(
-            lineNumber,
-            doc.lineAt(lineNumber).range.end.character
-          ),
-          "\n".concat(
-            nxtLineInd > ind ? nxtLineInd : ind,
-            txt
-          )
-        );
-      })
-      .then(() => {
-        currentEditor.selection = sel;
-      });
+
+    switch (direction) {
+      // down
+      case Wrap.down:
+        currentEditor
+          .edit((e) => {
+            e.insert(
+              new vscode.Position(
+                lineNumber,
+                doc.lineAt(printLineNumber).range.end.character
+              ),
+              "\n".concat(nxtLineInd > ind ? nxtLineInd : ind, txt)
+            );
+          })
+          .then(() => {
+            currentEditor.selection = sel;
+          });
+        break;
+
+      // up
+      case Wrap.up:
+        currentEditor
+          .edit((e) => {
+            e.insert(
+              new vscode.Position(
+                lineNumber,
+                doc.lineAt(printLineNumber).range.end.character
+              ),
+              "\n".concat(nxtLineInd > ind ? nxtLineInd : ind, txt)
+            );
+          })
+          .then(() => {
+            currentEditor.selection = sel;
+          });
+        break;
+
+      //inline
+      case Wrap.line:
+        currentEditor
+          .edit((e) => {
+            e.replace(ran, txt);
+          })
+          .then(() => {
+            currentEditor.selection = new vscode.Selection(
+              new vscode.Position(
+                ran.start.line,
+                txt.length + ran.start.character
+              ),
+              new vscode.Position(
+                ran.start.line,
+                txt.length + ran.start.character
+              )
+            );
+          });
+        break;
+    }
   } catch (message) {
     console.error("quick-console-log REJECTED_PROMISE :", message);
-  }
-}
-
-function getTabSize(tabSize: string | number | undefined): number {
-  if (tabSize && typeof tabSize === "number") {
-    return tabSize;
-  } else if (tabSize && typeof tabSize === "string") {
-    return parseInt(tabSize);
-  } else {
-    return 4;
   }
 }
 

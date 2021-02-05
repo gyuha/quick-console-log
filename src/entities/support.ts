@@ -22,3 +22,14 @@ export function getDocType(doc: string): SupportLanguage | undefined {
   }
   return undefined;
 }
+
+export const logFunctionName: { [k in SupportLanguage]: string } = {
+  javascript: "console.log",
+  python: "print",
+};
+
+export const logBraceString: { [k in SupportLanguage]: string[] } = {
+  javascript: ["(", ")"],
+  python: ["(", ")"],
+};
+

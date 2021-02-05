@@ -13,6 +13,7 @@ export interface WrapData {
 }
 
 export enum Wrap {
-  down,
   up,
+  down,
+  line,
 }
