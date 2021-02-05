@@ -15,7 +15,10 @@ export function outputText(
   properties: ExtensionProperties
 ): string {
   item = item.trim();
-  const semicolon = properties.addSemicolonInTheEnd ? ";" : "";
+  let semicolon = '';
+  if (language !== 'python') {
+    semicolon = properties.addSemicolonInTheEnd ? ";" : "";
+  }
   const { logMessagePrefix, quote, useFullPath } = properties;
   const fileNameAnLineNumber = properties.includeFileNameAndLineNum;
 

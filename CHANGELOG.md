@@ -4,6 +4,9 @@ All notable changes to the "quick-console-log" extension will be documented in t
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.1.1] - 2021-02-06
+### Remove semicolon when python use.
+
 ## [0.1.1] - 2021-02-05
 ### Current line log change
 - Modify to select all sentences in the current line.
