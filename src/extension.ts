@@ -1,15 +1,18 @@
-import * as path from 'path';
+import * as path from "path";
 import * as vscode from "vscode";
-import { ExtensionProperties, getExtensionProperties } from "./entities/extensionProperties";
+import {
+  ExtensionProperties,
+  getExtensionProperties
+} from "./entities/extensionProperties";
 import { getDocType, SupportLanguage } from "./entities/support";
-import { Wrap, WrapData } from './entities/wrap';
+import { Wrap } from "./entities/wrap";
 
-const logFunctionName: {[k in SupportLanguage]: string} = {
+const logFunctionName: { [k in SupportLanguage]: string } = {
   javascript: "console.log",
   python: "print",
 };
 
-const logBraceString: {[k in SupportLanguage]: string[]} = {
+const logBraceString: { [k in SupportLanguage]: string[] } = {
   javascript: ["(", ")"],
   python: ["(", ")"],
 };
@@ -32,14 +35,13 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function handle(target: Wrap, prefix?: boolean, type?: string) {
-  new Promise((resolve, reject) => {
+  try {
     const doc = currentEditor.document;
 
     const language = getDocType(doc.languageId);
 
     if (language === undefined) {
-      reject("NO_SUPPORT_DOC");
-      return;
+      throw new Error("NO_SUPPORT_DOC");
     }
 
     const properties: ExtensionProperties = getExtensionProperties();
@@ -52,8 +54,7 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
         : new vscode.Range(sel.start, sel.end);
 
     if (ran === undefined) {
-      reject("NO_WORD");
-      return;
+      throw new Error("NO_WORD");
     }
 
     const lineNumber = ran.start.line;
@@ -73,7 +74,7 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
 
     if (useFullPath === false) {
       fileName = path.basename(doc.fileName);
-    }  else {
+    } else {
       fileName = fileName.replace(/\\/g, "\\\\");
     }
 
@@ -87,52 +88,39 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
 
     txt = txt.concat(item, logBraceString[language][1], semicolon);
 
-    let wrapData: WrapData = {
-      txt,
-      item,
-      ran: ran as vscode.Range,
-      doc,
-      idx,
-      ind,
-      line: lineNumber,
-      sel,
-      lastLine: doc.lineCount - 1 === lineNumber,
-    };
-    resolve(wrapData);
-  })
-    // @ts-ignore
-    .then((wrap: WrapData) => {
-      let nxtLine: vscode.TextLine;
-      let nxtLineInd: string;
+    // output text
+    let nxtLine: vscode.TextLine;
+    let nxtLineInd: string;
 
-      if (!wrap.lastLine) {
-        nxtLine = wrap.doc.lineAt(wrap.line + 1);
-        nxtLineInd = nxtLine.text.substring(
-          0,
-          nxtLine.firstNonWhitespaceCharacterIndex
+    if (!(doc.lineCount -1 === lineNumber)) {
+      nxtLine = doc.lineAt(lineNumber + 1);
+      nxtLineInd = nxtLine.text.substring(
+        0,
+        nxtLine.firstNonWhitespaceCharacterIndex
+      );
+    } else {
+      nxtLineInd = "";
+    }
+    currentEditor
+      .edit((e) => {
+        e.insert(
+          new vscode.Position(
+            lineNumber,
+            doc.lineAt(lineNumber).range.end.character
+          ),
+          "\n".concat(
+            nxtLineInd > ind ? nxtLineInd : ind,
+            txt
+          )
         );
-      } else {
-        nxtLineInd = "";
-      }
-      currentEditor
-        .edit((e) => {
-          e.insert(
-            new vscode.Position(
-              wrap.line,
-              wrap.doc.lineAt(wrap.line).range.end.character
-            ),
-            "\n".concat(nxtLineInd > wrap.ind ? nxtLineInd : wrap.ind, wrap.txt)
-          );
-        })
-        .then(() => {
-          currentEditor.selection = wrap.sel;
-        });
-    })
-    .catch((message) => {
-      console.error("quick-console-log REJECTED_PROMISE :", message);
-    });
+      })
+      .then(() => {
+        currentEditor.selection = sel;
+      });
+  } catch (message) {
+    console.error("quick-console-log REJECTED_PROMISE :", message);
+  }
 }
-
 
 function getTabSize(tabSize: string | number | undefined): number {
   if (tabSize && typeof tabSize === "number") {
