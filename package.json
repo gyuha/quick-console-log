@@ -23,7 +23,7 @@
     "keybindings": [
       {
         "command": "quickConsoleLog.wrap.down",
-        "key": "ctrl+alt+l",
+        "key": "ctrl+alt+d",
         "when": "editorTextFocus"
       }
 		],

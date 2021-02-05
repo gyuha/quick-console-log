@@ -1,0 +1,24 @@
+
+export type SupportLanguage = 'javascript' | 'python';
+
+export const javascriptDocs = [ 
+  "javascript",
+  "javascriptreact",
+  "typescript",
+  "typescriptreact",
+];
+
+export const supportDocs = [
+  ...javascriptDocs,
+  "python",
+];
+
+export function getDocType(doc: string): SupportLanguage | undefined {
+  if (javascriptDocs.indexOf(doc) >= 0) {
+    return 'javascript';
+  }
+  if (doc === 'python') {
+    return 'python';
+  }
+  return undefined;
+}

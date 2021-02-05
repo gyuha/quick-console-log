@@ -1,19 +1,7 @@
+import * as path from 'path';
 import * as vscode from "vscode";
-import { ExtensionProperties } from "./entities/extensionProperties";
-
-type SupportLanguage = 'javascript' | 'python';
-
-const javascriptDocs = [ 
-  "javascript",
-  "javascriptreact",
-  "typescript",
-  "typescriptreact",
-];
-
-const supportDocs = [
-  ...javascriptDocs,
-  "python",
-];
+import { ExtensionProperties, getExtensionProperties } from "./entities/extensionProperties";
+import { getDocType, SupportLanguage } from "./entities/support";
 
 const logFunctionName: {[k in SupportLanguage]: string} = {
   javascript: "console.log",
@@ -79,8 +67,13 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
 
     let txt = logFunctionName[language].concat(logBraceString[language][0]);
 
+    let fl = "";
+    if (fileNameAnLineNumber) {
+      fl = fl.concat("[", path.basename(doc.fileName), ":", String(lineNumber), "]:");
+    }
+
     if (logMessagePrefix) {
-      txt = txt.concat(quote, logMessagePrefix, quote, ", ");
+      txt = txt.concat(quote, logMessagePrefix, fl, quote, ", ");
     }
 
     txt = txt.concat(item, logBraceString[language][1], semicolon);
@@ -129,35 +122,6 @@ function handle(target: Wrap, prefix?: boolean, type?: string) {
     .catch((message) => {
       console.error("quick-console-log REJECTED_PROMISE :", message);
     });
-}
-
-function getExtensionProperties() {
-  const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(
-    "quickConsoleLog"
-  );
-  const logMessagePrefix = config.logMessagePrefix
-    ? config.logMessagePrefix
-    : "";
-  const addSemicolonInTheEnd = config.addSemicolonInTheEnd || false;
-  const quote = config.quote || '"';
-  const includeFileNameAndLineNum = config.includeFileNameAndLineNum || false;
-  const extensionProperties: ExtensionProperties = {
-    logMessagePrefix,
-    addSemicolonInTheEnd,
-    quote,
-    includeFileNameAndLineNum,
-  };
-  return extensionProperties;
-}
-
-function getDocType(doc: string): SupportLanguage | undefined {
-  if (javascriptDocs.indexOf(doc) >= 0) {
-    return 'javascript';
-  }
-  if (doc === 'python') {
-    return 'python';
-  }
-  return undefined;
 }
 
 
