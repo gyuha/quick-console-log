@@ -4,6 +4,11 @@ All notable changes to the "quick-console-log" extension will be documented in t
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.1.4] - 2021-02-07
+
+### Support version modify.
+
+
 ## [0.1.3] - 2021-02-06
 
 ### Icon change
