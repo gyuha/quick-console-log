@@ -47,8 +47,10 @@ function handle(direction: Wrap, prefix?: boolean, type?: string) {
 
     let ran =
       len === 0
-        ? currentEditor.document.getWordRangeAtPosition(sel.anchor) as vscode.Range
-        : new vscode.Range(sel.start, sel.end) as vscode.Range;
+        ? (currentEditor.document.getWordRangeAtPosition(
+            sel.anchor
+          ) as vscode.Range)
+        : (new vscode.Range(sel.start, sel.end) as vscode.Range);
 
     if (ran === undefined) {
       throw new Error("NO_WORD");
@@ -59,11 +61,13 @@ function handle(direction: Wrap, prefix?: boolean, type?: string) {
     let item;
     if (direction === Wrap.line && len === 0) {
       item = doc.lineAt(lineNumber).text;
-      ran = new vscode.Range(new vscode.Position(lineNumber, 0), new vscode.Position(lineNumber, item.length)) as vscode.Range;
+      ran = new vscode.Range(
+        new vscode.Position(lineNumber, sel.end.character),
+        new vscode.Position(lineNumber, item.length)
+      ) as vscode.Range;
     } else {
       item = doc.getText(ran);
     }
-
 
     const idx = doc.lineAt(lineNumber).firstNonWhitespaceCharacterIndex;
     const ind = doc.lineAt(lineNumber).text.substring(0, idx);
@@ -114,10 +118,6 @@ function handle(direction: Wrap, prefix?: boolean, type?: string) {
 
       // up
       case Wrap.up:
-        const tLine = doc.lineAt(lineNumber === 0 ? 0 : lineNumber - 1);
-        const tLineEmpty = tLine.text.trim() === "";
-        let lineCorr = 0;
-
         currentEditor
           .edit((e) => {
             e.insert(new vscode.Position(lineNumber, 0), ind.concat(txt, "\n"));
@@ -135,19 +135,20 @@ function handle(direction: Wrap, prefix?: boolean, type?: string) {
       case Wrap.line:
         currentEditor
           .edit((e) => {
-            e.replace(ran, txt);
-          })
-          .then(() => {
-            currentEditor.selection = new vscode.Selection(
-              new vscode.Position(
-                ran.start.line,
-                txt.length + ran.start.character
-              ),
-              new vscode.Position(
-                ran.start.line,
-                txt.length + ran.start.character
+            e.delete(
+              new vscode.Range(
+                new vscode.Position(lineNumber, 0),
+                new vscode.Position(
+                  lineNumber,
+                  doc.lineAt(lineNumber).range.end.character
+                )
               )
             );
+          })
+          .then(() => {
+            currentEditor.edit((e) => {
+              e.insert(new vscode.Position(lineNumber, 0), ind.concat(txt));
+            });
           });
         break;
     }
