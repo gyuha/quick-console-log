@@ -1,0 +1,9 @@
+{
+  "print": {
+    "prefix": "cl",
+    "body": [
+      "System.out.println(${0:$CLIPBOARD});"
+    ],
+    "description": "System.out.println"
+  }
+}

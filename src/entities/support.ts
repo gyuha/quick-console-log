@@ -1,5 +1,5 @@
 
-export type SupportLanguage = 'javascript' | 'python';
+export type SupportLanguage = 'javascript' | 'python' | 'java';
 
 export const javascriptDocs = [ 
   "javascript",
@@ -20,16 +20,21 @@ export function getDocType(doc: string): SupportLanguage | undefined {
   if (doc === 'python') {
     return 'python';
   }
+  if (doc === 'java') {
+    return 'java';
+  }
   return undefined;
 }
 
 export const logFunctionName: { [k in SupportLanguage]: string } = {
   javascript: "console.log",
   python: "print",
+  java: 'System.out.println'
 };
 
 export const logBraceString: { [k in SupportLanguage]: string[] } = {
   javascript: ["(", ")"],
   python: ["(", ")"],
+  java: ["(", ")"],
 };
 

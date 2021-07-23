@@ -1,7 +1,7 @@
 # Quick console log
 
 ## Support language
-Javascript, Javascript React, Typescript, Typescript react, Python
+Javascript, Javascript React, Typescript, Typescript react, Python, Java
 
 ---
 ## Features

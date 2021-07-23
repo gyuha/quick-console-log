@@ -5,7 +5,7 @@
   "icon": "images/icon.png",
   "repository": "https://github.com/gyuha/quick-console-log",
   "publisher": "nicegyuha",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "engines": {
     "vscode": "^1.52.0"
   },
@@ -106,6 +106,10 @@
       {
         "language": "python",
         "path": "./snippets/print.code-snippets"
+      },
+      {
+        "language": "java",
+        "path": "./snippets/system-out.code-snippets"
       }
     ]
   },

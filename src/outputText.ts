@@ -20,6 +20,10 @@ export function outputText(
     semicolon = properties.addSemicolonInTheEnd ? ";" : "";
   }
   const { logMessagePrefix, quote, useFullPath } = properties;
+  let currentQuote = quote;
+  if (language === 'java') {
+    currentQuote = '"';
+  }
   const fileNameAnLineNumber = properties.includeFileNameAndLineNum;
 
   let txt = logFunctionName[language].concat(logBraceString[language][0]);
@@ -35,11 +39,15 @@ export function outputText(
   }
 
   if (fileNameAnLineNumber) {
-    fl = fl.concat("[", fileName, ":", String(lineNumber), "]:");
+    fl = fl.concat("[", fileName, ":", String(lineNumber), "]: ");
   }
 
   if (logMessagePrefix) {
-    txt = txt.concat(quote, logMessagePrefix, fl, quote, ", ");
+    if (language !== 'java') {
+      txt = txt.concat(currentQuote, logMessagePrefix, fl, currentQuote,  ", ");
+    } else {
+      txt = txt.concat(currentQuote, logMessagePrefix, fl, currentQuote,  " + ");
+    }
   }
 
   return txt.concat(item, logBraceString[language][1], semicolon);
