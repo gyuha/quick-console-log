@@ -21,18 +21,22 @@ In Python, `print` is used instead of `console.log`.
 `ctrl+alt+c`:  Log output at the current of the sentence.
 ![line.gif](https://raw.githubusercontent.com/gyuha/quick-console-log/main/images/wrap-line.gif)
 
+`ctrl+alt+v`:  Log output at the current by clipboard.
+
 ### Snippet
 `cl`: Log output by clipboard.
 ![snippet.gif](https://raw.githubusercontent.com/gyuha/quick-console-log/main/images/snippet.gif)
 
+`dl`: Log output, only Unity c#
 
 ## Properties
 
 | key                       | type    | default | description                                                  |
 | ------------------------- | ------- | ------- | ------------------------------------------------------------ |
-| logMessagePrefix          | string  | 📢       | The prefix of the log message.                               |
+| logMessagePrefix          | string  | 📢      | The prefix of the log message.                               |
 | addSemicolonInTheEnd      | boolean | true    | Whether to add or not a semicolon in the end of the log message. |
 | quote                     | enum    | "       | Double quotes, single quotes or back tick                    |
+| useAutoVariableLabel      | boolean | true    | Use auto variable label                                      |
 | useFullPath               | boolean | false   | Use full path of file name.                                  |
 | includeFileNameAndLineNum | boolean | true    | Whether to include the file name and the line number of the log message. |
 
