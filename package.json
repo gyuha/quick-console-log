@@ -110,6 +110,10 @@
       {
         "language": "java",
         "path": "./snippets/system-out.code-snippets"
+      },
+      {
+        "language": "csharp",
+        "path": "./snippets/debug-log.code-snippets"
       }
     ]
   },

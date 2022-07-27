@@ -1,5 +1,5 @@
 
-export type SupportLanguage = 'javascript' | 'python' | 'java';
+export type SupportLanguage = 'javascript' | 'python' | 'java' | 'csharp';
 
 export const javascriptDocs = [ 
   "javascript",
@@ -17,11 +17,11 @@ export function getDocType(doc: string): SupportLanguage | undefined {
   if (javascriptDocs.indexOf(doc) >= 0) {
     return 'javascript';
   }
-  if (doc === 'python') {
-    return 'python';
-  }
-  if (doc === 'java') {
-    return 'java';
+  switch(doc) {
+    case "python":
+    case "java":
+    case "csharp":
+      return doc;
   }
   return undefined;
 }
@@ -29,12 +29,14 @@ export function getDocType(doc: string): SupportLanguage | undefined {
 export const logFunctionName: { [k in SupportLanguage]: string } = {
   javascript: "console.log",
   python: "print",
-  java: 'System.out.println'
+  java: 'System.out.println',
+  csharp: 'Debug.Log'
 };
 
 export const logBraceString: { [k in SupportLanguage]: string[] } = {
   javascript: ["(", ")"],
   python: ["(", ")"],
   java: ["(", ")"],
+  csharp: ["(", ")"]
 };
 

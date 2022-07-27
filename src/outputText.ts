@@ -21,7 +21,7 @@ export function outputText(
   }
   const { logMessagePrefix, quote, useFullPath } = properties;
   let currentQuote = quote;
-  if (language === 'java') {
+  if (language === 'java' || language === 'csharp') {
     currentQuote = '"';
   }
   const fileNameAnLineNumber = properties.includeFileNameAndLineNum;

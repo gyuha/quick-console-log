@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
   currentEditor = vscode.window.activeTextEditor as vscode.TextEditor;
 
   vscode.window.onDidChangeActiveTextEditor(
-    (editor) => (currentEditor = editor as vscode.TextEditor)
+    (editor: any) => (currentEditor = editor as vscode.TextEditor)
   );
 
   context.subscriptions.push(

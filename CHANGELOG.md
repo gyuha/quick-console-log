@@ -4,6 +4,9 @@ All notable changes to the "quick-console-log" extension will be documented in t
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.1.6] - 2022-07-27
+ - Add support language : Unity c#
+
 ## [0.1.5] - 2021-07-23
  - Add support language : java
 
