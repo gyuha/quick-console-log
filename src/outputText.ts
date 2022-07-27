@@ -43,10 +43,10 @@ export function outputText(
   }
 
   if (logMessagePrefix) {
-    if (language !== 'java') {
-      txt = txt.concat(currentQuote, logMessagePrefix, fl, currentQuote,  ", ");
-    } else {
+    if (language === 'java' || language === 'csharp') {
       txt = txt.concat(currentQuote, logMessagePrefix, fl, currentQuote,  " + ");
+    } else {
+      txt = txt.concat(currentQuote, logMessagePrefix, fl, currentQuote,  ", ");
     }
   }
 
