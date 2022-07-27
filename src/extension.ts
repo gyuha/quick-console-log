@@ -28,8 +28,61 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerTextEditorCommand(
       "quickConsoleLog.wrap.line",
       (editor, edit) => handle(Wrap.line)
+    ),
+    vscode.commands.registerTextEditorCommand(
+      "quickConsoleLog.clipboard.paste",
+      (editor, edit) => clipboardLog()
     )
   );
+}
+
+async function clipboardLog() {
+  try {
+    const doc = currentEditor.document;
+    const language = getDocType(doc.languageId);
+
+    if (language === undefined) {
+      throw new Error("NO_SUPPORT_DOC");
+    }
+
+    const sel = currentEditor.selection;
+    const lineNumber = sel.start.line;
+
+    const properties: ExtensionProperties = getExtensionProperties();
+
+    const clipboardText = await vscode.env.clipboard.readText(); 
+    const txt = outputText(
+      clipboardText,
+      doc,
+      language,
+      lineNumber,
+      properties
+    );
+
+    const idx = doc.lineAt(lineNumber).firstNonWhitespaceCharacterIndex;
+    const ind = doc.lineAt(lineNumber).text.substring(0, idx);
+
+    currentEditor
+    .edit((e) => {
+      e.delete(
+        new vscode.Range(
+          new vscode.Position(lineNumber, 0),
+          new vscode.Position(
+            lineNumber,
+            doc.lineAt(lineNumber).range.end.character
+          )
+        )
+      );
+    })
+    .then(() => {
+      currentEditor.edit((e) => {
+        e.insert(new vscode.Position(lineNumber, 0), ind.concat(txt));
+      });
+    });
+
+  } catch (message) {
+    console.error("quick-console-log REJECTED_PROMISE :", message);
+  }
 }
 
 function handle(direction: Wrap, prefix?: boolean, type?: string) {
@@ -50,10 +103,10 @@ function handle(direction: Wrap, prefix?: boolean, type?: string) {
         ? (currentEditor.document.getWordRangeAtPosition(
             sel.anchor
           ) as vscode.Range)
-        : (new vscode.Range(sel.start, sel.end) as vscode.Range);
+        : (new vscode.Range(sel.start, sel.end));
 
     if (ran === undefined) {
-      throw new Error("NO_WORD");
+      ran = new vscode.Range(sel.start, sel.end);
     }
 
     const lineNumber = ran.start.line;

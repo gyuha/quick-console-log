@@ -6,11 +6,15 @@ export const javascriptDocs = [
   "javascriptreact",
   "typescript",
   "typescriptreact",
+  "vue",
+  "svelte"
 ];
 
 export const supportDocs = [
   ...javascriptDocs,
   "python",
+  "java",
+  "csharp"
 ];
 
 export function getDocType(doc: string): SupportLanguage | undefined {

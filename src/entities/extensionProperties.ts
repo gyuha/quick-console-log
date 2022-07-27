@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 export type ExtensionProperties = {
   logMessagePrefix: string;
   addSemicolonInTheEnd: boolean;
+  useAutoVariableLabel: boolean;
   includeFileNameAndLineNum: boolean;
   quote: string;
   useFullPath: boolean;
@@ -18,11 +19,13 @@ export function getExtensionProperties() {
   const addSemicolonInTheEnd = config.addSemicolonInTheEnd || false;
   const quote = config.quote || '"';
   const includeFileNameAndLineNum = config.includeFileNameAndLineNum || false;
+  const useAutoVariableLabel = config.useAutoVariableLabel || true;
   const useFullPath = config.useFullPath || false;
   const extensionProperties: ExtensionProperties = {
     logMessagePrefix,
     addSemicolonInTheEnd,
     quote,
+    useAutoVariableLabel,
     includeFileNameAndLineNum,
     useFullPath
   };

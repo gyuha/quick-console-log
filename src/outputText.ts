@@ -4,8 +4,24 @@ import { ExtensionProperties } from "./entities/extensionProperties";
 import {
   logBraceString,
   logFunctionName,
-  SupportLanguage
+  SupportLanguage,
 } from "./entities/support";
+
+function autoVarialbleLabelString(use: boolean, language: SupportLanguage, item: string): string {
+  if (!use || language !== 'javascript') {
+    return '';
+  } 
+
+  const invalidStr: string[] = ['\'', '"', ' ', "\t", ','];
+
+  for (const invalid of invalidStr) {
+    if (item.indexOf(invalid) !== -1) {
+      return '';
+    }
+  }
+
+  return `${item}: `;
+}
 
 export function outputText(
   item: string,
@@ -15,16 +31,27 @@ export function outputText(
   properties: ExtensionProperties
 ): string {
   item = item.trim();
-  let semicolon = '';
-  if (language !== 'python') {
+
+  let semicolon = "";
+  if (language !== "python") {
     semicolon = properties.addSemicolonInTheEnd ? ";" : "";
   }
-  const { logMessagePrefix, quote, useFullPath } = properties;
+  const {
+    logMessagePrefix,
+    quote,
+    useFullPath,
+    useAutoVariableLabel,
+    includeFileNameAndLineNum,
+  } = properties;
+
+  if (item.length === 0 && !logMessagePrefix) {
+    throw new Error("Logging anything...");
+  }
+
   let currentQuote = quote;
-  if (language === 'java' || language === 'csharp') {
+  if (language === "java" || language === "csharp") {
     currentQuote = '"';
   }
-  const fileNameAnLineNumber = properties.includeFileNameAndLineNum;
 
   let txt = logFunctionName[language].concat(logBraceString[language][0]);
 
@@ -38,15 +65,24 @@ export function outputText(
     fileName = fileName.replace(/\\/g, "\\\\");
   }
 
-  if (fileNameAnLineNumber) {
-    fl = fl.concat("[", fileName, ":", String(lineNumber), "]: ");
+  if (includeFileNameAndLineNum) {
+    fl = fl.concat("[", fileName, ":", String(lineNumber), "]");
+  }
+
+  if (item.length === 0 && logMessagePrefix) {
+    return `${txt}${currentQuote}${logMessagePrefix}${fl}${currentQuote}${logBraceString[language][1]}${semicolon}`;
+  }
+
+  if (item.length > 0) {
+    fl = fl.concat(": ", autoVarialbleLabelString(useAutoVariableLabel, language, item));
   }
 
   if (logMessagePrefix) {
-    if (language === 'java' || language === 'csharp') {
-      txt = txt.concat(currentQuote, logMessagePrefix, fl, currentQuote,  " + ");
+    txt = `${txt}${currentQuote}${logMessagePrefix}${fl}${currentQuote}`;
+    if (language === "java" || language === "csharp") {
+      txt = txt.concat(" + ");
     } else {
-      txt = txt.concat(currentQuote, logMessagePrefix, fl, currentQuote,  ", ");
+      txt = txt.concat(", ");
     }
   }
 

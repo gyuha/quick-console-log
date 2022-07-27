@@ -5,7 +5,7 @@
   "icon": "images/icon.png",
   "repository": "https://github.com/gyuha/quick-console-log",
   "publisher": "nicegyuha",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "engines": {
     "vscode": "^1.52.0"
   },
@@ -15,7 +15,8 @@
   "activationEvents": [
     "onCommand:quickConsoleLog.wrap.up",
     "onCommand:quickConsoleLog.wrap.down",
-    "onCommand:quickConsoleLog.wrap.line"
+    "onCommand:quickConsoleLog.wrap.line",
+    "onCommand:quickConsoleLog.clipboard.paste"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -31,6 +32,10 @@
       {
         "command": "quickConsoleLog.wrap.line",
         "title": "Quick console log line"
+      },
+      {
+        "command": "quickConsoleLog.clipboard.paste",
+        "title": "Quick console log by clipboard"
       }
     ],
     "keybindings": [
@@ -47,6 +52,11 @@
       {
         "command": "quickConsoleLog.wrap.line",
         "key": "ctrl+alt+c",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "quickConsoleLog.clipboard.paste",
+        "key": "ctrl+alt+v",
         "when": "editorTextFocus"
       }
     ],
@@ -73,6 +83,11 @@
           ],
           "default": "\"",
           "description": "Double quotes, single quotes or backtick"
+        },
+        "quickConsoleLog.useAutoVariableLabel": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use auto include variable label, only javascript"
         },
         "quickConsoleLog.useFullPath": {
           "type": "boolean",
@@ -124,8 +139,8 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-    "packaging": "vsce package",
-    "publish": "vsce publish"
+    "packaging": "npx vsce package",
+    "publish": "npx vsce publish"
   },
   "devDependencies": {
     "@types/vscode": "^1.52.0",
