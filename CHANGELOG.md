@@ -1,11 +1,21 @@
 # Change Log
 
-All notable changes to the "quick-console-log" extension will be documented in this file.
+## [0.1.8] - 2022-07-28
+ - Update change log
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## [0.1.7] - 2022-07-28
+ - Add unityProject option..
+  - Selected option : Output to Debug.Log() instead of Console.Log()
+ - Improved print line number.
 
 ## [0.1.6] - 2022-07-27
+ - QCL Setting option to include variable labels : https://github.com/gyuha/quick-console-log/issues/5
+ - QCL Log Current - change cursor position at end : https://github.com/gyuha/quick-console-log/issues/4
+ - QCL Log Current accessible by hotkey : https://github.com/gyuha/quick-console-log/issues/3
+ - QCL Enhancement - Empty Console Log : https://github.com/gyuha/quick-console-log/issues/2
  - Add support language : Unity c#
+ 
+> 👌 Thanks [Scott Rhamy](https://github.com/cycle4passion)
 
 ## [0.1.5] - 2021-07-23
  - Add support language : java
