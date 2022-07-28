@@ -1,9 +1,0 @@
-{
-  "debug log": {
-    "prefix": "dl",
-    "body": [
-      "Debug.Log(\"📢 [${TM_FILENAME}:${TM_LINE_NUMBER}]\"+ ${0:$CLIPBOARD});"
-    ],
-    "description": "Debug.Log"
-  }
-}

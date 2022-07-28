@@ -7,16 +7,20 @@ import {
   SupportLanguage,
 } from "./entities/support";
 
-function autoVarialbleLabelString(use: boolean, language: SupportLanguage, item: string): string {
-  if (!use || language !== 'javascript') {
-    return '';
-  } 
+function autoVarialbleLabelString(
+  use: boolean,
+  language: SupportLanguage,
+  item: string
+): string {
+  if (!use || language !== "javascript") {
+    return "";
+  }
 
-  const invalidStr: string[] = ['\'', '"', ' ', "\t", ','];
+  const invalidStr: string[] = ["'", '"', " ", "\t", ","];
 
   for (const invalid of invalidStr) {
     if (item.indexOf(invalid) !== -1) {
-      return '';
+      return "";
     }
   }
 
@@ -42,6 +46,7 @@ export function outputText(
     useFullPath,
     useAutoVariableLabel,
     includeFileNameAndLineNum,
+    unityProject,
   } = properties;
 
   if (item.length === 0 && !logMessagePrefix) {
@@ -50,10 +55,16 @@ export function outputText(
 
   let currentQuote = quote;
   if (language === "java" || language === "csharp") {
+    // Java and csharp project is fixed to double quoted.
     currentQuote = '"';
   }
 
-  let txt = logFunctionName[language].concat(logBraceString[language][0]);
+  let functionString =
+    language === "csharp" && unityProject
+      ? logFunctionName["unity"]
+      : logFunctionName[language];
+
+  let txt = functionString.concat(logBraceString[language][0]);
 
   let fl = "";
   let fileName = doc.fileName;
@@ -74,7 +85,10 @@ export function outputText(
   }
 
   if (item.length > 0) {
-    fl = fl.concat(": ", autoVarialbleLabelString(useAutoVariableLabel, language, item));
+    fl = fl.concat(
+      ": ",
+      autoVarialbleLabelString(useAutoVariableLabel, language, item)
+    );
   }
 
   if (logMessagePrefix) {

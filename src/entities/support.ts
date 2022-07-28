@@ -1,5 +1,5 @@
 
-export type SupportLanguage = 'javascript' | 'python' | 'java' | 'csharp';
+export type SupportLanguage = 'javascript' | 'python' | 'java' | 'csharp' | 'unity';
 
 export const javascriptDocs = [ 
   "javascript",
@@ -34,13 +34,15 @@ export const logFunctionName: { [k in SupportLanguage]: string } = {
   javascript: "console.log",
   python: "print",
   java: 'System.out.println',
-  csharp: 'Debug.Log'
+  csharp: 'Console.WriteLine',
+  unity: 'Debug.Log',
 };
 
 export const logBraceString: { [k in SupportLanguage]: string[] } = {
   javascript: ["(", ")"],
   python: ["(", ")"],
   java: ["(", ")"],
-  csharp: ["(", ")"]
+  csharp: ["(", ")"],
+  unity: ["(", ")"]
 };
 

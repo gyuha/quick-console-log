@@ -5,7 +5,7 @@
   "icon": "images/icon.png",
   "repository": "https://github.com/gyuha/quick-console-log",
   "publisher": "nicegyuha",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "engines": {
     "vscode": "^1.52.0"
   },
@@ -98,37 +98,42 @@
           "type": "boolean",
           "default": true,
           "description": "Whether to include the file name and the line number of the log message."
+        },
+        "quickConsoleLog.unityProject": {
+          "type": "boolean",
+          "default": true,
+          "description": "Output Debug.Log() instead of Console.WriteLine(), only c# file."
         }
       }
     },
     "snippets": [
       {
         "language": "javascript",
-        "path": "./snippets/console-log.code-snippets"
+        "path": "./snippets/javascript-log.code-snippets"
       },
       {
         "language": "javascriptreact",
-        "path": "./snippets/console-log.code-snippets"
+        "path": "./snippets/javascript-log.code-snippets"
       },
       {
         "language": "typescript",
-        "path": "./snippets/console-log.code-snippets"
+        "path": "./snippets/javascript-log.code-snippets"
       },
       {
         "language": "typescriptreact",
-        "path": "./snippets/console-log.code-snippets"
+        "path": "./snippets/javascript-log.code-snippets"
       },
       {
         "language": "python",
-        "path": "./snippets/print.code-snippets"
+        "path": "./snippets/python-log.code-snippets"
       },
       {
         "language": "java",
-        "path": "./snippets/system-out.code-snippets"
+        "path": "./snippets/java-log.code-snippets"
       },
       {
         "language": "csharp",
-        "path": "./snippets/debug-log.code-snippets"
+        "path": "./snippets/csharp-log.code-snippets"
       }
     ]
   },
