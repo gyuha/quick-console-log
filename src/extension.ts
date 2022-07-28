@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import {
   ExtensionProperties,
-  getExtensionProperties
+  getExtensionProperties,
 } from "./entities/extensionProperties";
 import { getDocType } from "./entities/support";
 import { Wrap } from "./entities/wrap";
@@ -50,12 +50,12 @@ async function clipboardLog() {
 
     const properties: ExtensionProperties = getExtensionProperties();
 
-    const clipboardText = await vscode.env.clipboard.readText(); 
+    const clipboardText = await vscode.env.clipboard.readText();
     const txt = outputText(
       clipboardText,
       doc,
       language,
-      lineNumber,
+      lineNumber + 1,
       properties
     );
 
@@ -63,23 +63,22 @@ async function clipboardLog() {
     const ind = doc.lineAt(lineNumber).text.substring(0, idx);
 
     currentEditor
-    .edit((e) => {
-      e.delete(
-        new vscode.Range(
-          new vscode.Position(lineNumber, 0),
-          new vscode.Position(
-            lineNumber,
-            doc.lineAt(lineNumber).range.end.character
+      .edit((e) => {
+        e.delete(
+          new vscode.Range(
+            new vscode.Position(lineNumber, 0),
+            new vscode.Position(
+              lineNumber,
+              doc.lineAt(lineNumber).range.end.character
+            )
           )
-        )
-      );
-    })
-    .then(() => {
-      currentEditor.edit((e) => {
-        e.insert(new vscode.Position(lineNumber, 0), ind.concat(txt));
+        );
+      })
+      .then(() => {
+        currentEditor.edit((e) => {
+          e.insert(new vscode.Position(lineNumber, 0), ind.concat(txt));
+        });
       });
-    });
-
   } catch (message) {
     console.error("quick-console-log REJECTED_PROMISE :", message);
   }
@@ -103,7 +102,7 @@ function handle(direction: Wrap, prefix?: boolean, type?: string) {
         ? (currentEditor.document.getWordRangeAtPosition(
             sel.anchor
           ) as vscode.Range)
-        : (new vscode.Range(sel.start, sel.end));
+        : new vscode.Range(sel.start, sel.end);
 
     if (ran === undefined) {
       ran = new vscode.Range(sel.start, sel.end);
@@ -126,17 +125,17 @@ function handle(direction: Wrap, prefix?: boolean, type?: string) {
     const ind = doc.lineAt(lineNumber).text.substring(0, idx);
 
     const properties: ExtensionProperties = getExtensionProperties();
+
+    let printLineNumber = lineNumber + 1;
+    if (direction === Wrap.down) {
+      printLineNumber++;
+    }
+
     // get output text
-    const txt = outputText(
-      item,
-      doc,
-      language,
-      direction === Wrap.up ? lineNumber + 2 : lineNumber + 1,
-      properties
-    );
+    const txt = outputText(item, doc, language, printLineNumber, properties);
 
     // insert text
-    let printLineNumber = direction === Wrap.down ? lineNumber : lineNumber - 1;
+    printLineNumber = direction === Wrap.down ? lineNumber : lineNumber - 1;
     printLineNumber = printLineNumber < 0 ? 0 : printLineNumber;
 
     switch (direction) {
