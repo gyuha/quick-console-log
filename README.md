@@ -1,7 +1,14 @@
 # Quick console log
 
 ## Support language
-Javascript, Javascript React, Typescript, Typescript react, Python, Java, C# for Unity
+- C# for Unity
+- Dart
+- Java
+- Javascript
+- Javascript React
+- Python
+- Typescript
+- Typescript react
 
 ---
 ## Features

@@ -2,7 +2,7 @@
   "print": {
     "prefix": "pr",
     "body": [
-      "print('📢 [${TM_FILENAME}:${TM_LINE_NUMBER}]', ${0:$CLIPBOARD})"
+      "print('📢 [${TM_FILENAME}:${TM_LINE_NUMBER}]' + ${0:$CLIPBOARD});"
     ],
     "description": "print"
   }

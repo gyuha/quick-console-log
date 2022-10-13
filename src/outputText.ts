@@ -93,7 +93,7 @@ export function outputText(
 
   if (logMessagePrefix) {
     txt = `${txt}${currentQuote}${logMessagePrefix}${fl}${currentQuote}`;
-    if (language === "java" || language === "csharp") {
+    if (language === "java" || language === "csharp" || language === "dart") {
       txt = txt.concat(" + ");
     } else {
       txt = txt.concat(", ");

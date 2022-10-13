@@ -1,6 +1,6 @@
 {
   "print": {
-    "prefix": "cl",
+    "prefix": "so",
     "body": [
       "System.out.println(${0:$CLIPBOARD});"
     ],

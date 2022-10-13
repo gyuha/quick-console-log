@@ -1,20 +1,21 @@
 
-export type SupportLanguage = 'javascript' | 'python' | 'java' | 'csharp' | 'unity';
+export type SupportLanguage = 'javascript' | 'python' | 'java' | 'csharp' | 'unity'|'dart';
 
 export const javascriptDocs = [ 
   "javascript",
   "javascriptreact",
+  "svelte",
   "typescript",
   "typescriptreact",
   "vue",
-  "svelte"
 ];
 
 export const supportDocs = [
   ...javascriptDocs,
-  "python",
+  "csharp",
+  "dart",
   "java",
-  "csharp"
+  "python",
 ];
 
 export function getDocType(doc: string): SupportLanguage | undefined {
@@ -25,24 +26,27 @@ export function getDocType(doc: string): SupportLanguage | undefined {
     case "python":
     case "java":
     case "csharp":
+    case "dart":
       return doc;
   }
   return undefined;
 }
 
 export const logFunctionName: { [k in SupportLanguage]: string } = {
+  csharp: 'Console.WriteLine',
+  dart: 'print',
+  java: 'System.out.println',
   javascript: "console.log",
   python: "print",
-  java: 'System.out.println',
-  csharp: 'Console.WriteLine',
   unity: 'Debug.Log',
 };
 
 export const logBraceString: { [k in SupportLanguage]: string[] } = {
+  csharp: ["(", ")"],
+  dart: ["(", ")"],
+  java: ["(", ")"],
   javascript: ["(", ")"],
   python: ["(", ")"],
-  java: ["(", ")"],
-  csharp: ["(", ")"],
-  unity: ["(", ")"]
+  unity: ["(", ")"],
 };
 
