@@ -45,7 +45,8 @@ export function outputText(
     quote,
     useFullPath,
     useAutoVariableLabel,
-    includeFileNameAndLineNum,
+    includeFileName,
+    includeLineNumber,
     unityProject,
   } = properties;
 
@@ -76,8 +77,14 @@ export function outputText(
     fileName = fileName.replace(/\\/g, "\\\\");
   }
 
-  if (includeFileNameAndLineNum) {
+  if (includeFileName && includeLineNumber) {
     fl = fl.concat("[", fileName, ":", String(lineNumber), "]");
+  }
+  else if (includeFileName) {
+    fl = fl.concat("[", fileName, "]");
+  }
+  else if (includeLineNumber) {
+    fl = fl.concat("[:", String(lineNumber), "]");
   }
 
   if (item.length === 0 && logMessagePrefix) {

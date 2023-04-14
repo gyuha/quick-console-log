@@ -36,13 +36,14 @@ In Python, `print` is used instead of `console.log`.
 
 ## Properties
 
-| key                       | type    | default | description                                                  |
-| ------------------------- | ------- | ------- | ------------------------------------------------------------ |
-| logMessagePrefix          | string  | 📢      | The prefix of the log message.                               |
-| addSemicolonInTheEnd      | boolean | true    | Whether to add or not a semicolon in the end of the log message. |
-| quote                     | enum    | "       | Double quotes, single quotes or back tick                    |
-| useAutoVariableLabel      | boolean | true    | Use auto variable label                                      |
-| useFullPath               | boolean | false   | Use full path of file name.                                  | 
-| includeFileNameAndLineNum | boolean | true    | Whether to include the file name and the line number of the log message. |
-| unityProject              | boolean | true    | Output Debug.Log() instead of Console.WriteLine(), only c# file |
+| key                  | type    | default | description                                                      |
+| ---------------------| ------- | ------- | ---------------------------------------------------------------- |
+| logMessagePrefix     | string  | 📢      | The prefix of the log message.                                   |
+| addSemicolonInTheEnd | boolean | true    | Whether to add or not a semicolon in the end of the log message. |
+| quote                | enum    | "       | Double quotes, single quotes or back tick                        |
+| useAutoVariableLabel | boolean | true    | Use auto variable label                                          |
+| useFullPath          | boolean | false   | Use full path of file name.                                      | 
+| includeFileName      | boolean | true    | Whether to include the file name of the log message.             |
+| includeLineNumber    | boolean | true    | Whether to include the line number of the log message.           |
+| unityProject         | boolean | true    | Output Debug.Log() instead of Console.WriteLine(), only c# file  |
 

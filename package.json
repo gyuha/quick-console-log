@@ -94,10 +94,15 @@
           "default": false,
           "description": "Use full path of file name."
         },
-        "quickConsoleLog.includeFileNameAndLineNum": {
+        "quickConsoleLog.includeFileName": {
           "type": "boolean",
           "default": true,
-          "description": "Whether to include the file name and the line number of the log message."
+          "description": "Whether to include the file name of the log message."
+        },
+        "quickConsoleLog.includeLineNumber": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to include the line number of the log message."
         },
         "quickConsoleLog.unityProject": {
           "type": "boolean",
