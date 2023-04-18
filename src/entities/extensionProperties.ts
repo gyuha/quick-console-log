@@ -4,7 +4,8 @@ export type ExtensionProperties = {
   logMessagePrefix: string;
   addSemicolonInTheEnd: boolean;
   useAutoVariableLabel: boolean;
-  includeFileNameAndLineNum: boolean;
+  includeFileName: boolean;
+  includeLineNumber: boolean;
   quote: string;
   useFullPath: boolean;
   unityProject: boolean;
@@ -23,9 +24,14 @@ export function getExtensionProperties() {
 
   const quote = config.quote || '"';
 
-  const includeFileNameAndLineNum =
-    config.includeFileNameAndLineNum !== undefined
-      ? config.includeFileNameAndLineNum
+  const includeFileName =
+    config.includeFileName !== undefined
+      ? config.includeFileName
+      : false;
+
+  const includeLineNumber =
+    config.includeLineNumber !== undefined
+      ? config.includeLineNumber
       : false;
 
   const useAutoVariableLabel =
@@ -44,7 +50,8 @@ export function getExtensionProperties() {
     addSemicolonInTheEnd,
     quote,
     useAutoVariableLabel,
-    includeFileNameAndLineNum,
+    includeFileName,
+    includeLineNumber,
     useFullPath,
     unityProject,
   };
