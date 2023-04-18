@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.1.10] - 2022-10-13
+ - Separated the option to output files and lines simultaneously into files and lines
+ > 👌 Thanks [Kotsuha](https://github.com/Kotsuha)
+
 ## [0.1.9] - 2022-10-13
  - Add support language : Dart
 
