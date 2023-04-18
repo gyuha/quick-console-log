@@ -79,11 +79,9 @@ export function outputText(
 
   if (includeFileName && includeLineNumber) {
     fl = fl.concat("[", fileName, ":", String(lineNumber), "]");
-  }
-  else if (includeFileName) {
+  } else if (includeFileName) {
     fl = fl.concat("[", fileName, "]");
-  }
-  else if (includeLineNumber) {
+  } else if (includeLineNumber) {
     fl = fl.concat("[:", String(lineNumber), "]");
   }
 
@@ -93,7 +91,7 @@ export function outputText(
 
   if (item.length > 0) {
     fl = fl.concat(
-      ": ",
+      includeFileName || includeLineNumber ? ": " : "",
       autoVarialbleLabelString(useAutoVariableLabel, language, item)
     );
   }

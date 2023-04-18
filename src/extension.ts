@@ -63,7 +63,7 @@ async function clipboardLog() {
     const ind = doc.lineAt(lineNumber).text.substring(0, idx);
 
     currentEditor
-      .edit((e: { delete: (arg0: any) => void; }) => {
+      .edit((e: { delete: (arg0: any) => void }) => {
         e.delete(
           new vscode.Range(
             new vscode.Position(lineNumber, 0),
@@ -75,7 +75,7 @@ async function clipboardLog() {
         );
       })
       .then(() => {
-        currentEditor.edit((e: { insert: (arg0: any, arg1: any) => void; }) => {
+        currentEditor.edit((e: { insert: (arg0: any, arg1: any) => void }) => {
           e.insert(new vscode.Position(lineNumber, 0), ind.concat(txt));
         });
       });
@@ -154,7 +154,7 @@ function handle(direction: Wrap, prefix?: boolean, type?: string) {
           nxtLineInd = "";
         }
         currentEditor
-          .edit((e: { insert: (arg0: any, arg1: string) => void; }) => {
+          .edit((e: { insert: (arg0: any, arg1: string) => void }) => {
             e.insert(
               new vscode.Position(
                 lineNumber,
@@ -171,7 +171,7 @@ function handle(direction: Wrap, prefix?: boolean, type?: string) {
       // up
       case Wrap.up:
         currentEditor
-          .edit((e: { insert: (arg0: any, arg1: any) => void; }) => {
+          .edit((e: { insert: (arg0: any, arg1: any) => void }) => {
             e.insert(new vscode.Position(lineNumber, 0), ind.concat(txt, "\n"));
           })
           .then(() => {
@@ -186,7 +186,7 @@ function handle(direction: Wrap, prefix?: boolean, type?: string) {
       //inline
       case Wrap.line:
         currentEditor
-          .edit((e: { delete: (arg0: any) => void; }) => {
+          .edit((e: { delete: (arg0: any) => void }) => {
             e.delete(
               new vscode.Range(
                 new vscode.Position(lineNumber, 0),
@@ -198,9 +198,11 @@ function handle(direction: Wrap, prefix?: boolean, type?: string) {
             );
           })
           .then(() => {
-            currentEditor.edit((e: { insert: (arg0: any, arg1: any) => void; }) => {
-              e.insert(new vscode.Position(lineNumber, 0), ind.concat(txt));
-            });
+            currentEditor.edit(
+              (e: { insert: (arg0: any, arg1: any) => void }) => {
+                e.insert(new vscode.Position(lineNumber, 0), ind.concat(txt));
+              }
+            );
           });
         break;
     }
