@@ -36,12 +36,21 @@
       {
         "command": "quickConsoleLog.clipboard.paste",
         "title": "Quick console log by clipboard"
+      },
+      {
+        "command": "quickConsoleLog.deleteAllConsoleLogs",
+        "title": "Delete All Console Logs"
       }
     ],
     "keybindings": [
       {
         "command": "quickConsoleLog.wrap.up",
         "key": "ctrl+alt+u",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "quickConsoleLog.deleteAllConsoleLogs",
+        "key": "ctrl+alt+shift+c",
         "when": "editorTextFocus"
       },
       {

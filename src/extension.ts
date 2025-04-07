@@ -32,8 +32,56 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerTextEditorCommand(
       "quickConsoleLog.clipboard.paste",
       (editor: any, edit: any) => clipboardLog()
+    ),
+    vscode.commands.registerTextEditorCommand(
+      "quickConsoleLog.deleteAllConsoleLogs",
+      (editor: any, edit: any) => deleteAllConsoleLogs()
     )
   );
+}
+
+async function deleteAllConsoleLogs() {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor) {
+    return;
+  }
+
+  const document = editor.document;
+  const languageId = document.languageId;
+  const text = document.getText();
+
+  let regex: RegExp;
+
+  switch (languageId) {
+    case "javascript":
+    case "typescript":
+      regex = /console\.log\(.*?\);?/g;
+      break;
+    case "python":
+      regex = /print\(.*?\)/g;
+      break;
+    case "java":
+      regex = /System\.out\.println\(.*?\);/g;
+      break;
+    case "csharp":
+      regex = /Console\.WriteLine\(.*?\);/g;
+      break;
+    default:
+      vscode.window.showInformationMessage(`언어 ${languageId}에 대한 console.log 제거가 지원되지 않습니다.`);
+      return;
+  }
+
+  const newText = text.replace(regex, "");
+
+  editor.edit((editBuilder) => {
+    const range = new vscode.Range(
+      0,
+      0,
+      document.lineCount,
+      document.getText().length
+    );
+    editBuilder.replace(range, newText);
+  });
 }
 
 async function clipboardLog() {
