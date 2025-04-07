@@ -71,7 +71,9 @@ async function deleteAllConsoleLogs() {
       return;
   }
 
-  const newText = text.replace(regex, "");
+  let newText = text.replace(regex, "");
+  // Remove empty lines left after removing console.log statements
+  newText = newText.replace(/^\s*[\r\n]+/gm, "");
   const matchCount = (text.match(regex) || []).length;
 
   editor.edit((editBuilder) => {
