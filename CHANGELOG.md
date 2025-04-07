@@ -2,9 +2,6 @@
 
 ## [0.1.11] - 2025-04-07
  - Added a command to delete all console.log statements in the current file.
- - Modified the deleteAllConsoleLogs function to use different regex patterns based on the language.
- - Modified the deleteAllConsoleLogs function to display the number of removed console.log statements in a notification.
- - Modified the deleteAllConsoleLogs function to remove the empty lines that are left after deleting the console.log statements.
 
 ## [0.1.10] - 2022-10-13
  - Separated the option to output files and lines simultaneously into files and lines
