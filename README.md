@@ -28,6 +28,8 @@ In Python, `print` is used instead of `console.log`.
 
 `ctrl+alt+v`:  Log output at the current by clipboard.
 
+`ctrl+alt+shift+c`: Delete all console.log statements in the current file.
+
 ### Snippet
 `cl`: Log output by clipboard.
 ![snippet.gif](https://raw.githubusercontent.com/gyuha/quick-console-log/main/images/snippet.gif)
@@ -46,4 +48,3 @@ In Python, `print` is used instead of `console.log`.
 | includeFileName      | boolean | true    | Whether to include the file name of the log message.             |
 | includeLineNumber    | boolean | true    | Whether to include the line number of the log message.           |
 | unityProject         | boolean | true    | Output Debug.Log() instead of Console.WriteLine(), only c# file  |
-

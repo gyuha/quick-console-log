@@ -72,6 +72,7 @@ async function deleteAllConsoleLogs() {
   }
 
   const newText = text.replace(regex, "");
+  const matchCount = (text.match(regex) || []).length;
 
   editor.edit((editBuilder) => {
     const range = new vscode.Range(
@@ -81,6 +82,24 @@ async function deleteAllConsoleLogs() {
       document.getText().length
     );
     editBuilder.replace(range, newText);
+  }).then(() => {
+    let logType = "console.log";
+    switch (languageId) {
+      case "javascript":
+      case "typescript":
+        logType = "console.log";
+        break;
+      case "python":
+        logType = "print";
+        break;
+      case "java":
+        logType = "System.out.println";
+        break;
+      case "csharp":
+        logType = "Console.WriteLine";
+        break;
+    }
+    vscode.window.showInformationMessage(`총 ${matchCount}개의 ${logType} 문을 제거했습니다.`);
   });
 }
 
