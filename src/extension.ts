@@ -55,6 +55,11 @@ async function deleteAllConsoleLogs() {
   const originLanguageId = languageId;
   const text = document.getText();
 
+  // 현재 커서 위치 저장
+  const currentPosition = editor.selection.active;
+  const currentLine = currentPosition.line;
+  const currentCharacter = currentPosition.character;
+
   let regex: RegExp;
 
   const properties: ExtensionProperties = getExtensionProperties();
@@ -98,45 +103,63 @@ async function deleteAllConsoleLogs() {
       return;
   }
 
+  // 삭제될 로그 문의 위치를 찾습니다
+  const matches: { start: number; end: number }[] = [];
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    matches.push({
+      start: text.substring(0, match.index).split('\n').length - 1,
+      end: text.substring(0, match.index + match[0].length).split('\n').length - 1
+    });
+  }
+
+  // 현재 라인 이전에 삭제될 로그 문의 수를 계산
+  const deletedLinesBefore = matches.filter(m => m.start < currentLine).length;
+
   let newText = text.replace(regex, "");
   // Remove empty lines left after removing console.log statements
   newText = newText.replace(/^\s*[\r\n]+/gm, "");
-  const matchCount = (text.match(regex) || []).length;
+  const matchCount = matches.length;
 
-  editor
-    .edit((editBuilder) => {
-      const range = new vscode.Range(
-        0,
-        0,
-        document.lineCount,
-        document.getText().length
-      );
-      editBuilder.replace(range, newText);
-    })
-    .then(() => {
-      let logType = "console.log";
-      switch (languageId) {
-        case "javascript":
-          logType = "console.log";
-          break;
-        case "python":
-          logType = "print";
-          break;
-        case "java":
-          logType = "System.out.println";
-          break;
-        case "csharp":
-          if (unityProject) {
-            logType = "Debug.Log";
-          } else {
-            logType = "Console.WriteLine";
-          }
-          break;
+  await editor.edit((editBuilder) => {
+    const range = new vscode.Range(
+      0,
+      0,
+      document.lineCount,
+      document.getText().length
+    );
+    editBuilder.replace(range, newText);
+  });
+
+  // 커서 위치 조정
+  const newPosition = new vscode.Position(
+    Math.max(0, currentLine - deletedLinesBefore),
+    currentCharacter
+  );
+  editor.selection = new vscode.Selection(newPosition, newPosition);
+
+  let logType = "console.log";
+  switch (languageId) {
+    case "javascript":
+      logType = "console.log";
+      break;
+    case "python":
+      logType = "print";
+      break;
+    case "java":
+      logType = "System.out.println";
+      break;
+    case "csharp":
+      if (unityProject) {
+        logType = "Debug.Log";
+      } else {
+        logType = "Console.WriteLine";
       }
-      vscode.window.showInformationMessage(
-        `Removed ${matchCount} ${logType} statements.`
-      );
-    });
+      break;
+  }
+  vscode.window.showInformationMessage(
+    `Removed ${matchCount} ${logType} statements.`
+  );
 }
 
 async function clipboardLog() {
