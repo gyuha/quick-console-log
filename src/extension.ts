@@ -3,7 +3,7 @@ import {
   ExtensionProperties,
   getExtensionProperties,
 } from "./entities/extensionProperties";
-import { getDocType } from "./entities/support";
+import { getDocType, javascriptDocs } from "./entities/support";
 import { Wrap } from "./entities/wrap";
 import { outputText } from "./outputText";
 
@@ -47,14 +47,22 @@ async function deleteAllConsoleLogs() {
   }
 
   const document = editor.document;
-  const languageId = document.languageId;
+  let languageId = document.languageId;
+  const originLanguageId = languageId;
   const text = document.getText();
 
   let regex: RegExp;
 
+  const properties: ExtensionProperties = getExtensionProperties();
+
+  const { unityProject } = properties;
+
+  if (javascriptDocs.includes(languageId)) {
+    languageId = "javascript";
+  }
+
   switch (languageId) {
     case "javascript":
-    case "typescript":
       regex = /console\.log\(.*?\);?/g;
       break;
     case "python":
@@ -64,10 +72,16 @@ async function deleteAllConsoleLogs() {
       regex = /System\.out\.println\(.*?\);/g;
       break;
     case "csharp":
-      regex = /Console\.WriteLine\(.*?\);/g;
+      if (unityProject) {
+        regex = /Debug\.Log\(.*?\);/g;
+      } else {
+        regex = /Console\.WriteLine\(.*?\);/g;
+      }
       break;
     default:
-      vscode.window.showInformationMessage(`언어 ${languageId}에 대한 console.log 제거가 지원되지 않습니다.`);
+      vscode.window.showInformationMessage(
+        `"${originLanguageId}" does not support log removal.`
+      );
       return;
   }
 
@@ -76,33 +90,40 @@ async function deleteAllConsoleLogs() {
   newText = newText.replace(/^\s*[\r\n]+/gm, "");
   const matchCount = (text.match(regex) || []).length;
 
-  editor.edit((editBuilder) => {
-    const range = new vscode.Range(
-      0,
-      0,
-      document.lineCount,
-      document.getText().length
-    );
-    editBuilder.replace(range, newText);
-  }).then(() => {
-    let logType = "console.log";
-    switch (languageId) {
-      case "javascript":
-      case "typescript":
-        logType = "console.log";
-        break;
-      case "python":
-        logType = "print";
-        break;
-      case "java":
-        logType = "System.out.println";
-        break;
-      case "csharp":
-        logType = "Console.WriteLine";
-        break;
-    }
-    vscode.window.showInformationMessage(`총 ${matchCount}개의 ${logType} 문을 제거했습니다.`);
-  });
+  editor
+    .edit((editBuilder) => {
+      const range = new vscode.Range(
+        0,
+        0,
+        document.lineCount,
+        document.getText().length
+      );
+      editBuilder.replace(range, newText);
+    })
+    .then(() => {
+      let logType = "console.log";
+      switch (languageId) {
+        case "javascript":
+          logType = "console.log";
+          break;
+        case "python":
+          logType = "print";
+          break;
+        case "java":
+          logType = "System.out.println";
+          break;
+        case "csharp":
+          if (unityProject) {
+            logType = "Debug.Log";
+          } else {
+            logType = "Console.WriteLine";
+          }
+          break;
+      }
+      vscode.window.showInformationMessage(
+        `Removed ${matchCount} ${logType} statements.`
+      );
+    });
 }
 
 async function clipboardLog() {
