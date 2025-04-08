@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.1.12] - 2024-01-09
+ - Added toggle comments feature for console.log statements (ctrl+alt+shift+c)
+ - Modified delete console.log feature to only delete logs with logMessagePrefix
+ - Improved cursor position retention after deleting console.logs
+
 ## [0.1.11] - 2025-04-07
  - Added a command to delete all console.log statements in the current file.
 
