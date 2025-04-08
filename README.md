@@ -28,7 +28,9 @@ In Python, `print` is used instead of `console.log`.
 
 `ctrl+alt+v`:  Log output at the current by clipboard.
 
-`ctrl+alt+shift+d`: Delete all console.log statements in the current file.
+`ctrl+alt+shift+d`: Delete all console.log statements that contain logMessagePrefix in the current file. For example, if logMessagePrefix is "📢", only log statements containing "📢" will be deleted, other log statements will remain unchanged.
+
+`ctrl+alt+shift+c`: Toggle comments for all console.log statements in the current file. If a log statement is not commented, it will be commented out. If it is already commented, the comment will be removed.
 
 ### Snippet
 `cl`: Log output by clipboard.
