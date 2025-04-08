@@ -39,7 +39,7 @@
       },
       {
         "command": "quickConsoleLog.deleteAllConsoleLogs",
-        "title": "Delete All Console Logs"
+        "title": "Delete Console Logs (Only logs with logMessagePrefix)"
       }
     ],
     "keybindings": [
@@ -50,7 +50,7 @@
       },
       {
         "command": "quickConsoleLog.deleteAllConsoleLogs",
-        "key": "ctrl+alt+shift+c",
+        "key": "ctrl+alt+shift+d",
         "when": "editorTextFocus"
       },
       {

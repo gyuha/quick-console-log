@@ -55,27 +55,36 @@ async function deleteAllConsoleLogs() {
 
   const properties: ExtensionProperties = getExtensionProperties();
 
-  const { unityProject } = properties;
+  const { unityProject, logMessagePrefix } = properties;
+
+  if (!logMessagePrefix) {
+    vscode.window.showInformationMessage(
+      "logMessagePrefix가 설정되어 있지 않습니다."
+    );
+    return;
+  }
 
   if (javascriptDocs.includes(languageId)) {
     languageId = "javascript";
   }
 
+  const escapedPrefix = logMessagePrefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
   switch (languageId) {
     case "javascript":
-      regex = /console\.log\(.*?\);?/g;
+      regex = new RegExp(`console\\.log\\([^)]*${escapedPrefix}[^)]*\\);?`, 'g');
       break;
     case "python":
-      regex = /print\(.*?\)/g;
+      regex = new RegExp(`print\\([^)]*${escapedPrefix}[^)]*\\)`, 'g');
       break;
     case "java":
-      regex = /System\.out\.println\(.*?\);/g;
+      regex = new RegExp(`System\\.out\\.println\\([^)]*${escapedPrefix}[^)]*\\);`, 'g');
       break;
     case "csharp":
       if (unityProject) {
-        regex = /Debug\.Log\(.*?\);/g;
+        regex = new RegExp(`Debug\\.Log\\([^)]*${escapedPrefix}[^)]*\\);`, 'g');
       } else {
-        regex = /Console\.WriteLine\(.*?\);/g;
+        regex = new RegExp(`Console\\.WriteLine\\([^)]*${escapedPrefix}[^)]*\\);`, 'g');
       }
       break;
     default:

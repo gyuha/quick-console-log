@@ -28,7 +28,7 @@ In Python, `print` is used instead of `console.log`.
 
 `ctrl+alt+v`:  Log output at the current by clipboard.
 
-`ctrl+alt+shift+c`: Delete all console.log statements in the current file.
+`ctrl+alt+shift+d`: Delete all console.log statements in the current file.
 
 ### Snippet
 `cl`: Log output by clipboard.
