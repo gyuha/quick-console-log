@@ -36,6 +36,10 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerTextEditorCommand(
       "quickConsoleLog.deleteAllConsoleLogs",
       (editor: any, edit: any) => deleteAllConsoleLogs()
+    ),
+    vscode.commands.registerTextEditorCommand(
+      "quickConsoleLog.toggleConsoleLogComments",
+      (editor: any, edit: any) => toggleConsoleLogComments()
     )
   );
 }
@@ -307,6 +311,81 @@ function handle(direction: Wrap, prefix?: boolean, type?: string) {
     }
   } catch (message) {
     console.error("quick-console-log REJECTED_PROMISE :", message);
+  }
+}
+
+async function toggleConsoleLogComments() {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor) {
+    return;
+  }
+
+  const document = editor.document;
+  let languageId = document.languageId;
+  const originLanguageId = languageId;
+
+  if (javascriptDocs.includes(languageId)) {
+    languageId = "javascript";
+  }
+
+  let logPattern: RegExp;
+  let commentStart: string;
+  let commentEnd: string = "";
+
+  switch (languageId) {
+    case "javascript":
+      logPattern = /^\s*(\/\/\s*)?console\.log\(.*\);?$/;
+      commentStart = "//";
+      break;
+    case "python":
+      logPattern = /^\s*(#\s*)?print\(.*\)$/;
+      commentStart = "#";
+      break;
+    case "java":
+      logPattern = /^\s*(\/\/\s*)?System\.out\.println\(.*\);$/;
+      commentStart = "//";
+      break;
+    case "csharp":
+      const { unityProject } = getExtensionProperties();
+      if (unityProject) {
+        logPattern = /^\s*(\/\/\s*)?Debug\.Log\(.*\);$/;
+      } else {
+        logPattern = /^\s*(\/\/\s*)?Console\.WriteLine\(.*\);$/;
+      }
+      commentStart = "//";
+      break;
+    default:
+      vscode.window.showInformationMessage(
+        `"${originLanguageId}" does not support comment toggling.`
+      );
+      return;
+  }
+
+  const edits: vscode.TextEdit[] = [];
+  
+  for (let i = 0; i < document.lineCount; i++) {
+    const line = document.lineAt(i);
+    const text = line.text;
+
+    if (logPattern.test(text)) {
+      let newText: string;
+      if (text.trim().startsWith(commentStart)) {
+        // 주석 제거
+        newText = text.replace(new RegExp(`^(\\s*)${commentStart}\\s*`), '$1');
+      } else {
+        // 주석 추가
+        const indent = text.match(/^\s*/)?.[0] || '';
+        newText = `${indent}${commentStart} ${text.trim()}`;
+      }
+
+      edits.push(new vscode.TextEdit(line.range, newText));
+    }
+  }
+
+  if (edits.length > 0) {
+    const workspaceEdit = new vscode.WorkspaceEdit();
+    workspaceEdit.set(document.uri, edits);
+    await vscode.workspace.applyEdit(workspaceEdit);
   }
 }
 

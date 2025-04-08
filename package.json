@@ -40,6 +40,10 @@
       {
         "command": "quickConsoleLog.deleteAllConsoleLogs",
         "title": "Delete Console Logs (Only logs with logMessagePrefix)"
+      },
+      {
+        "command": "quickConsoleLog.toggleConsoleLogComments",
+        "title": "Toggle Console Log Comments"
       }
     ],
     "keybindings": [
@@ -66,6 +70,11 @@
       {
         "command": "quickConsoleLog.clipboard.paste",
         "key": "ctrl+alt+v",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "quickConsoleLog.toggleConsoleLogComments",
+        "key": "ctrl+alt+shift+c",
         "when": "editorTextFocus"
       }
     ],
