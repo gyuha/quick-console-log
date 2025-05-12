@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.1.13] - 2025-05-13
+ - Add support language : Astro
+ > 👌 Thanks [Viacheslav Snizhko](https://github.com/vsnig)
+
 ## [0.1.12] - 2024-01-09
  - Added toggle comments feature for console.log statements (ctrl+alt+shift+c)
  - Modified delete console.log feature to only delete logs with logMessagePrefix
