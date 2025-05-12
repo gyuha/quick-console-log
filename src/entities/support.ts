@@ -7,6 +7,7 @@ export const javascriptDocs = [
   "svelte",
   "typescript",
   "typescriptreact",
+  "astro",
   "vue",
 ];
 

@@ -9,6 +9,7 @@
 - Python
 - Typescript
 - Typescript react
+- Astro
 
 ---
 ## Features

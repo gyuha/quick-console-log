@@ -147,6 +147,10 @@
         "path": "./snippets/javascript-log.code-snippets"
       },
       {
+        "language": "astro",
+        "path": "./snippets/javascript-log.code-snippets"
+      },
+      {
         "language": "python",
         "path": "./snippets/python-log.code-snippets"
       },
