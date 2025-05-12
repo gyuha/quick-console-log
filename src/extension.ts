@@ -53,14 +53,11 @@ async function deleteAllConsoleLogs() {
   const document = editor.document;
   let languageId = document.languageId;
   const originLanguageId = languageId;
-  const text = document.getText();
 
   // 현재 커서 위치 저장
   const currentPosition = editor.selection.active;
   const currentLine = currentPosition.line;
   const currentCharacter = currentPosition.character;
-
-  let regex: RegExp;
 
   const properties: ExtensionProperties = getExtensionProperties();
 
@@ -79,21 +76,30 @@ async function deleteAllConsoleLogs() {
 
   const escapedPrefix = logMessagePrefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+  let logPattern: RegExp;
+  let commentedLogPattern: RegExp;
+
   switch (languageId) {
     case "javascript":
-      regex = new RegExp(`console\\.log\\([^)]*${escapedPrefix}[^)]*\\);?`, 'g');
+      // 일반 로그 패턴과 주석 처리된 로그 패턴
+      logPattern = new RegExp(`console\\.log\\([^)]*${escapedPrefix}[^)]*\\);?`);
+      commentedLogPattern = new RegExp(`^\s*//.*console\\.log\\([^)]*${escapedPrefix}[^)]*\\);?`);
       break;
     case "python":
-      regex = new RegExp(`print\\([^)]*${escapedPrefix}[^)]*\\)`, 'g');
+      logPattern = new RegExp(`print\\([^)]*${escapedPrefix}[^)]*\\)`);
+      commentedLogPattern = new RegExp(`^\s*#.*print\\([^)]*${escapedPrefix}[^)]*\\)`);
       break;
     case "java":
-      regex = new RegExp(`System\\.out\\.println\\([^)]*${escapedPrefix}[^)]*\\);`, 'g');
+      logPattern = new RegExp(`System\\.out\\.println\\([^)]*${escapedPrefix}[^)]*\\);`);
+      commentedLogPattern = new RegExp(`^\s*//.*System\\.out\\.println\\([^)]*${escapedPrefix}[^)]*\\);`);
       break;
     case "csharp":
       if (unityProject) {
-        regex = new RegExp(`Debug\\.Log\\([^)]*${escapedPrefix}[^)]*\\);`, 'g');
+        logPattern = new RegExp(`Debug\\.Log\\([^)]*${escapedPrefix}[^)]*\\);`);
+        commentedLogPattern = new RegExp(`^\s*//.*Debug\\.Log\\([^)]*${escapedPrefix}[^)]*\\);`);
       } else {
-        regex = new RegExp(`Console\\.WriteLine\\([^)]*${escapedPrefix}[^)]*\\);`, 'g');
+        logPattern = new RegExp(`Console\\.WriteLine\\([^)]*${escapedPrefix}[^)]*\\);`);
+        commentedLogPattern = new RegExp(`^\s*//.*Console\\.WriteLine\\([^)]*${escapedPrefix}[^)]*\\);`);
       }
       break;
     default:
@@ -103,33 +109,35 @@ async function deleteAllConsoleLogs() {
       return;
   }
 
-  // 삭제될 로그 문의 위치를 찾습니다
-  const matches: { start: number; end: number }[] = [];
-  let match;
-  while ((match = regex.exec(text)) !== null) {
-    matches.push({
-      start: text.substring(0, match.index).split('\n').length - 1,
-      end: text.substring(0, match.index + match[0].length).split('\n').length - 1
-    });
+  // 삭제할 라인들을 찾습니다 (일반 로그와 주석 처리된 로그 모두)
+  const linesToDelete: number[] = [];
+  
+  for (let i = 0; i < document.lineCount; i++) {
+    const line = document.lineAt(i);
+    // 공백 줄은 건너뜁니다
+    if (line.isEmptyOrWhitespace) {
+      continue;
+    }
+    // 일반 로그 또는 주석 처리된 로그 확인
+    if (logPattern.test(line.text) || commentedLogPattern.test(line.text)) {
+      linesToDelete.push(i);
+    }
   }
 
-  // 현재 라인 이전에 삭제될 로그 문의 수를 계산
-  const deletedLinesBefore = matches.filter(m => m.start < currentLine).length;
-
-  let newText = text.replace(regex, "");
-  // Remove empty lines left after removing console.log statements
-  newText = newText.replace(/^\s*[\r\n]+/gm, "");
-  const matchCount = matches.length;
-
-  await editor.edit((editBuilder) => {
-    const range = new vscode.Range(
-      0,
-      0,
-      document.lineCount,
-      document.getText().length
-    );
-    editBuilder.replace(range, newText);
+  // 커서 위치를 조정하기 위해 삭제될 라인 중 현재 라인 이전에 있는 라인 수 계산
+  const deletedLinesBefore = linesToDelete.filter(line => line < currentLine).length;
+  
+  // 역순으로 삭제해야 인덱스가 변경되지 않습니다
+  const edits = linesToDelete.reverse().map(lineNumber => {
+    const range = document.lineAt(lineNumber).rangeIncludingLineBreak;
+    return vscode.TextEdit.delete(range);
   });
+
+  const workspaceEdit = new vscode.WorkspaceEdit();
+  workspaceEdit.set(document.uri, edits);
+  
+  // 삭제 실행
+  await vscode.workspace.applyEdit(workspaceEdit);
 
   // 커서 위치 조정
   const newPosition = new vscode.Position(
@@ -158,7 +166,7 @@ async function deleteAllConsoleLogs() {
       break;
   }
   vscode.window.showInformationMessage(
-    `Removed ${matchCount} ${logType} statements.`
+    `Removed ${linesToDelete.length} ${logType} statements.`
   );
 }
 
